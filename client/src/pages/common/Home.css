@@ -1,0 +1,357 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+html,
+body {
+  height: 100%;
+}
+.maincontainer {
+  display: grid;
+  grid-template-columns: 56% 44%;
+  height: 100vh;
+  overflow: hidden;
+}
+.half-content {
+  display: flex;
+  flex-direction: column;
+}
+.hun-white {
+  height: 21%;
+  background-color: white;
+  padding: 35px;
+  display: flex;
+  gap: 10px;
+}
+.content-white {
+  height: 79%;
+  background-color: white;
+  padding: 35px;
+}
+
+.text-context {
+  margin-left: 20px;
+}
+.Explore {
+  height: 45px;
+  width: 130px;
+  background-color: black;
+  color: white;
+  font-size: 15px;
+  font-family: Roboto;
+  border-radius: 30px;
+  padding-top: 2px;
+  border: none;
+
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease,
+    border 0.3s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+.Smarter {
+  font-size: 50px;
+  margin-top: 40px;
+  font-family: Inter;
+  font-weight: 700;
+}
+
+.Explore:hover {
+  cursor: pointer;
+  color: black;
+  background-color: white;
+  border: 2px solid black;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+.Explore:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+.last-column {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-top: 50px;
+}
+.first-box {
+  width: 241px;
+  height: 105px;
+}
+.box-fieldset {
+  width: 100%;
+  height: 100%;
+  border: 1px solid rgb(112, 128, 144);
+  border-radius: 10px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.box-legend {
+  padding: 0 4px;
+  font-weight: 600;
+  font-family: Roboto;
+}
+
+.minhalf-content {
+  background-color: white;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.main-image {
+  height: 690px;
+  z-index: 1;
+}
+
+.overlay-icon {
+  position: absolute;
+  height: 700px;
+  opacity: 0;
+  z-index: 0;
+  animation:
+    iconFadeIn 1.2s ease-out forwards,
+    floatIcon 6s ease-in-out infinite;
+  animation-delay: 0.3s;
+}
+
+@keyframes iconFadeIn {
+  to {
+    opacity: 0.06;
+  }
+}
+
+@keyframes floatIcon {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-36px);
+  }
+}
+
+/* Media - Query */
+@media (max-width: 600px) {
+  .maincontainer {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+
+  .half-content,
+  .minhalf-content {
+    width: 100%;
+  }
+
+  .hun-white {
+    height: auto;
+    padding: 20px;
+    justify-content: center;
+  }
+
+  .content-white {
+    height: auto;
+    padding: 20px;
+  }
+
+  .text-context {
+    margin-left: 0;
+    text-align: center;
+  }
+
+  .Explore {
+    width: 120px;
+    height: 40px;
+    font-size: 14px;
+  }
+
+  .Smarter {
+    font-size: 32px;
+    margin-top: 25px;
+  }
+
+  .text-context p[style*="50px"] {
+    font-size: 34px !important;
+    bottom: 0 !important;
+  }
+
+  .text-context p[style*="18px"] {
+    font-size: 15px !important;
+  }
+
+  .last-column {
+    justify-content: center;
+    margin-top: 30px;
+  }
+
+  .first-box {
+    width: 100%;
+    height: auto;
+  }
+
+  .box-fieldset {
+    padding: 15px;
+  }
+
+  .minhalf-content {
+    margin-top: 30px;
+  }
+
+  .main-image {
+    height: auto;
+    width: 92%;
+  }
+
+  .overlay-icon {
+    height: auto;
+    width: 76%;
+  }
+}
+
+/* Login */
+/* .login-image{
+  height: 750px;
+  width: 650px;
+  border-top-left-radius: 6px;
+  border-bottom-left-radius: 6px;
+  
+} */
+
+.login-modal {
+  position: relative;
+  height: 650px;
+  width: 500px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0px 5px 25px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+.close-btn {
+  position: absolute;
+  top: 70px;
+  left: 67%;
+  font-size: 20px;
+  color: #ffffff;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.circle-background {
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(
+      circle at 2% 2%,
+      rgba(20, 20, 20, 0.12) 0 80px,
+      transparent 81px
+    ),
+    radial-gradient(
+      circle at 80% 10%,
+      rgba(20, 20, 20, 0.12) 0 60px,
+      transparent 61px
+    ),
+    radial-gradient(
+      circle at 30% 44%,
+      rgba(20, 20, 20, 0.12) 0 50px,
+      transparent 51px
+    ),
+    radial-gradient(
+      circle at 85% 48%,
+      rgba(20, 20, 20, 0.12) 0 20px,
+      transparent 21px
+    ),
+    radial-gradient(
+      circle at 77% 66%,
+      rgba(20, 20, 20, 0.12) 0 60px,
+      transparent 61px
+    ),
+    radial-gradient(
+      circle at 18% 82%,
+      rgba(20, 20, 20, 0.12) 0 68px,
+      transparent 69px
+    );
+
+  z-index: 0;
+  opacity: 0.35;
+}
+.login-content,
+.Sign-content {
+  position: relative;
+  z-index: 1;
+  padding: 20px;
+}
+.login-inbox {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.Welcome-back {
+  font-size: 40px;
+  font-weight: 700;
+  font-family: Inter;
+}
+.login-content input {
+  width: 100%;
+  margin-top: 35px;
+  padding: 7px 0;
+  font-size: 16px;
+  font-family: Quicksand, Arial, sans-serif;
+  font-weight: 600;
+  color: #000;
+  border-radius: 6px;
+  background: transparent;
+  border: none; /* remove all borders */
+  border-bottom: 2px solid #000; /* add only bottom border */
+  outline: none; /* remove blue focus outline */
+}
+
+.login-content input::placeholder {
+  font-size: 18px;
+  font-family: Quicksand;
+}
+.login-content input:focus {
+  border-bottom-color: #4f46e5; /* or any color you like */
+}
+
+.margin-control {
+  margin-top: 20px;
+  font-family: Quicksand;
+  font-weight: 600;
+  padding: 2px;
+}
+.Login-success {
+  margin-top: 35px;
+  height: 50px;
+  width: 100%;
+  background-color: black;
+  color: white;
+  font-size: 22px;
+  font-family: Quicksand;
+  border-radius: 5px;
+  padding: 1px 0px 4px;
+  font-weight: 500;
+  border: none;
+
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease,
+    border 0.3s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+.Login-success:hover {
+  cursor: pointer;
+  border: 2px solid black;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+.Login-success:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
