@@ -220,3 +220,54 @@
   margin-top: 40px;
   box-shadow: 0 16px 25px rgba(0, 0, 0, 0.05);
 }
+.add-skill-btn {
+  width: 10%;
+  height: 38px;
+  padding: 12px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;  /* dark border */
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 15px;
+  margin-top: 15px;
+  outline: none;
+  font-family: Inter;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  cursor: pointer;
+}
+
+
+.add-skill-btn:hover {
+  background: rgb(224, 240, 247);
+}
+
+.add-skill-btn:active {
+  transform: scale(0.99);
+}
+
+/* ✅ UL clean (no dots) */
+.skills-list {
+  list-style: none;
+  padding: 0;
+  margin: 15px 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* ✅ LI clean "chip" style */
+.skill-item {
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  background: #f7f7f7;
+  border-radius: 999px; /* pill */
+  font-size: 14px;
+  color: #111827;
+  font-weight: 500;
+}
+
+.skill-item:hover {
+  background: #efefef;
+}

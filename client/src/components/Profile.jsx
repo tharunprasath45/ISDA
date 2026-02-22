@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./Profile.css";
 import "./Dashboard.css";
 import { header, renderheader } from "./Dashboardcontent";
-import { Save, User, Shield, Calendars } from "lucide-react";
+import { Save, User, Shield, Calendars, Plus } from "lucide-react";
 import Select from "react-select";
 
 function Profile() {
@@ -41,6 +41,41 @@ function Profile() {
     return intro;
   });
   const [activetabs, setactivetabs] = useState("profile");
+  
+  const[task, settask] = useState(null);
+  const[todos,settoDos] = useState([]);
+
+  const addSkills =()=>{
+    if(task){
+      const alreadyAdded = todos.some((t) => t.value === task.value);
+  if (alreadyAdded) return;
+        settoDos([...todos, task]);
+    settask(null);
+   
+    }
+    else{
+      console.log("No skill selected"); 
+    }
+     const deleteTask = (index)=>{
+      const newTodos = [...todos];
+      newTodos.splice(index, 1);
+      settoDos(newTodos);
+    }
+    const alreadyAdded = todos.some((t) => t.value === task.value);
+  if (alreadyAdded) return;
+
+ 
+  }
+ const SkillsWanted = [
+  {value: "react", label:'React'},
+  {value: "Node.js", label:'Node.js'},
+   {value: "SQL", label:'SQL'},
+  {value: "Machinelearning", label:'Machine Learning'},
+   {value: "uiux", label:'UI&UX'},
+  {value: "cybersecurity", label:'Cyber-Security'},
+   {value: "mongodb", label:'MongoDB'},
+  {value: "java", label:'Java'},
+ ]
   return (
     <div className="total-width-1">
       <div>{renderheader(updateskills)}</div>
@@ -162,6 +197,29 @@ function Profile() {
             </div>
           </div>
         </>
+      )}
+      {/* skills interest */}
+      {activetabs === "skills" && (
+        <div className="profile-card">
+              <h2 className="card-title">Your Skills</h2>
+            <p className="card-subtitle">Add skills to get personalized recommendations</p>
+            <div className="form-group">
+                <Select 
+                  className="select-region"
+                  options={SkillsWanted}
+                  value={task}
+                  onChange={settask}
+                  placeholder="Select a skill to add"/>
+                  <button onClick={addSkills} className="add-skill-btn"><Plus size={18} /> Add</button>
+                  <ul className="skills-list">
+                  {todos.map((todo, index)=>(
+                    <li key={index} className="skill-item">{todo.label }
+                    <button onClick={()=>deleteTask(index)}>delete</button></li>
+                  ))}
+                  </ul>
+              </div>
+
+        </div>
       )}
     </div>
   );
