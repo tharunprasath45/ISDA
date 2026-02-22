@@ -153,12 +153,14 @@
 .toggle-password-1 {
   position: absolute;
   right: 29.2%;
-  top: 24%;
+  top: 22.3%;
   transform: translateY(-50%);
   background: none;
   border: none;
   cursor: pointer;
-  color: #777;
+  color: #6366f1;
+  font-family: Inter;
+  font-weight: 500;
 }
 
 

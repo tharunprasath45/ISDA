@@ -117,9 +117,9 @@ function Loginpage({ Welcome, Carrer, Access, Sign, Dont }) {
                   onClick={() => setshowpassword(!showpassword)}
                 >
                   {showpassword ? (
-                    <Eye size={icon_size} />
+                   "SHOW"
                   ) : (
-                    <EyeOff size={icon_size} />
+                    "HIDE"
                   )}
                 </button>
           

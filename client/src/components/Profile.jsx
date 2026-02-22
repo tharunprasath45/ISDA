@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./Profile.css";
 import "./Dashboard.css";
 import { header, renderheader } from "./Dashboardcontent";
-import { Save, User, Shield, Calendars, Plus } from "lucide-react";
+import { Save, User, Shield, Calendars, Plus, X, Trash2} from "lucide-react";
 import Select from "react-select";
 
 function Profile() {
@@ -56,16 +56,12 @@ function Profile() {
     else{
       console.log("No skill selected"); 
     }
-     const deleteTask = (index)=>{
+  }
+  const deleteTask = (index)=>{
       const newTodos = [...todos];
       newTodos.splice(index, 1);
       settoDos(newTodos);
     }
-    const alreadyAdded = todos.some((t) => t.value === task.value);
-  if (alreadyAdded) return;
-
- 
-  }
  const SkillsWanted = [
   {value: "react", label:'React'},
   {value: "Node.js", label:'Node.js'},
@@ -214,11 +210,38 @@ function Profile() {
                   <ul className="skills-list">
                   {todos.map((todo, index)=>(
                     <li key={index} className="skill-item">{todo.label }
-                    <button onClick={()=>deleteTask(index)}>delete</button></li>
+                    <p onClick={()=>deleteTask(index)}><X size={20} color="red" style={{marginTop:'5px',cursor:'pointer'}}/></p></li>
                   ))}
                   </ul>
               </div>
 
+        </div>
+      )}
+
+      {/* preferences */}
+      {activetabs === "Preferences" && (
+        <div className="profile-card" style={{border:'2px red solid'}}>
+          <h2 className="card-title" style={{color:'red'}}>Danger Zone</h2>
+          <div className="information" style={{background:'#bdbcbc4e'}}>
+              <p className="profile-name" id="account-time-text">
+                Delete Account <p style={{fontSize:'14px',color:'#727272',fontWeight:"400"}}>Permanently delete your account and all data</p>
+              </p>
+             
+              <p
+                className="profile-name"
+                style={{
+                 
+              display: "flex",
+                  alignItems: "center",
+                  gap: "7px",
+                }}
+              >
+               <button style={{padding:'12px 20px',borderRadius:'8px',background:'red',color:"#ffffff",border:'none',cursor:'pointer',
+                fontSize:'15px',fontFamily:'Inter',fontWeight:'600',display:"flex",alignItems:'center',
+                gap:'12px'
+               }} id="delete-btn"><Trash2 size={18}/>Delete</button>
+              </p>
+            </div>
         </div>
       )}
     </div>

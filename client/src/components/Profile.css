@@ -37,6 +37,18 @@
   align-items: center;
   gap: 10px;
   margin-right: 44px;
+    transition:
+    background-color 0.3s ease,
+    color 0.3s ease,
+    border 0.3s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+.explore-btn-1:hover{
+  transform: translateY(-3px);
+}
+.explore-btn-1:active{
+  transform: translateY(0);
 }
 .explore-btn-1 svg {
   width: 18px;
@@ -141,6 +153,9 @@
 }
 #account-time-text {
   font-size: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 .profile-email {
   margin: 4px 0;
@@ -266,8 +281,30 @@
   font-size: 14px;
   color: #111827;
   font-weight: 500;
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  
 }
 
 .skill-item:hover {
   background: #efefef;
+}
+#delete-btn {
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease,
+    border 0.3s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+#delete-btn:hover {
+  cursor: pointer;
+  border: 2px solid black;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+#delete-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
