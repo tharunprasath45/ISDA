@@ -218,7 +218,7 @@ function Dashboardcontent() {
       <div
         style={{
           height: "200px",
-          width: "100%",
+          width: "102%",
           backgroundColor: "white",
           padding: "18px 18px 10px 10px",
           marginTop: "6px",

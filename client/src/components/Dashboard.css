@@ -93,6 +93,7 @@
   background-color: #ffffff; /* light gray */
   padding: 12px;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 /* Header bar */

@@ -26,6 +26,24 @@ function Loginpage({ Welcome, Carrer, Access, Sign, Dont }) {
     if (error) {
       alert(error.message);
     } else {
+        const fullname = data.user?.user_metadata?.fullname || "";
+
+  localStorage.setItem(
+    "users",
+    JSON.stringify({
+      fullname,
+    })
+  );
+  localStorage.setItem("useremail", logindata.email);
+
+  
+      localStorage.setItem("admins",
+        JSON.stringify({
+          email: logindata.email,
+          role:'User',
+          createdAt: new Date().toISOString(),
+        })
+      )
       console.log("Logged success:", data);
       
       alert("Logged sucess",data);

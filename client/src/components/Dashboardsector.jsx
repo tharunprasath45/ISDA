@@ -5,10 +5,32 @@ import { LayoutDashboard, Search, TrendingUp, Disc2, User, Settings2, LogOut } f
 import Dashboardcontent from "./Dashboardcontent";
 import Skillanalysis from "./Skillanalysis";
 import Profile from "./Profile";
+import { useNavigate } from "react-router-dom";
+import supabase from "../Supabase";
+import { useEffect } from "react";
 
 function Dashboardsector() {
   const [activeindex, setActiveIndex] = useState(0);
+  
+  const navigate = useNavigate();
 
+  const handleLogout = async() =>{
+    await supabase.auth.signOut();
+    localStorage.removeItem("users");
+    localStorage.removeItem("admins");
+    navigate("/login");
+  }
+  useEffect(() => {
+  const checkUser = async () => {
+    const { data } = await supabase.auth.getSession();
+
+    if (!data.session) {
+      navigate("/login");
+    }
+  };
+
+  checkUser();
+}, []);
   const navitems = [
     { image: <LayoutDashboard />, label: "Dashboard" },
     { image: <Search />, label: "Skill Analysis" },
@@ -39,7 +61,7 @@ function Dashboardsector() {
               </div>
          
             ))}
-            <button className="log"> <LogOut style={{marginTop:'5px'}}/>Logout  </button>
+            <button className="log" onClick={handleLogout}> <LogOut style={{marginTop:'5px'}}/>Logout  </button>
            
           </div>
           

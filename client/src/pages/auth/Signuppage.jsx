@@ -23,21 +23,26 @@ function Signuppage() {
   const signup = async (e) => {
     e.preventDefault();
     const { data, error } = await supabase.auth.signUp({
-      fullname: signuppage.fullname,
+      options: {
+        data: {
+          fullname: signuppage.fullname,
+        },
+      },
       email: signuppage.email,
       password: signuppage.password,
     });
     if (error) {
       alert(error.message);
     } else {
-      localStorage.setItem("users",
+      localStorage.setItem(
+        "users",
         JSON.stringify({
           fullname: signuppage.fullname,
-          email: signuppage.email,
-          role:'User',
-          createdAt: new Date().toISOString(),
-        })
+        }),
       );
+      localStorage.setItem("useremail",
+        signuppage.email
+      )
       console.log("Signup success:", data);
       alert("Account created successfully!");
     }
@@ -158,11 +163,7 @@ function Signuppage() {
                       className="toggle-password-1"
                       onClick={() => setshowpassword(!showpassword)}
                     >
-                      {showpassword ? (
-                        "SHOW"
-                      ) : (
-                        "HIDE"
-                      )}
+                      {showpassword ? "SHOW" : "HIDE"}
                     </button>
                     <button
                       type="submit"
