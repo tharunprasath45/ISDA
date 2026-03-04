@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import icon from "../../assets/icons.png";
 import carrerforge from "../../assets/carrerforge.png";
-import { CircleCheck, Eye, EyeOff, ArrowLeft } from "lucide-react";
+import { CircleCheck, ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import "./Signup.css";
 import supabase from "../../Supabase";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 function Signuppage() {
   const points = [
     "Access real-time skill demand data",
@@ -32,7 +34,16 @@ function Signuppage() {
       password: signuppage.password,
     });
     if (error) {
-      alert(error.message);
+      toast.warn(error.message, {
+        position: "top-right",
+        autoClose: 1200,
+        hideProgressBar: true,
+        closeOnClick: false,
+        pauseOnHover: false,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
     } else {
       localStorage.setItem(
         "users",
@@ -40,11 +51,19 @@ function Signuppage() {
           fullname: signuppage.fullname,
         }),
       );
-      localStorage.setItem("useremail",
-        signuppage.email
-      )
+      localStorage.setItem("useremail", signuppage.email);
       console.log("Signup success:", data);
-      alert("Account created successfully!");
+      // alert("Account created successfully!");
+      toast.success("Account created successfully!", {
+        position: "bottom-left",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
     }
   };
 
@@ -113,6 +132,7 @@ function Signuppage() {
                 onSubmit={signup}
                 style={{ display: "flex", flexDirection: "column" }}
               >
+                <ToastContainer />
                 <div className="field-1">
                   <div className="field-header">
                     <label>Full Name</label>

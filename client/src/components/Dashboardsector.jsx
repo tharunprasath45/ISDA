@@ -8,6 +8,9 @@ import Profile from "./Profile";
 import { useNavigate } from "react-router-dom";
 import supabase from "../Supabase";
 import { useEffect } from "react";
+import Reccomendations from "./Reccomendations";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function Dashboardsector() {
   const [activeindex, setActiveIndex] = useState(0);
@@ -18,8 +21,22 @@ function Dashboardsector() {
     await supabase.auth.signOut();
     localStorage.removeItem("users");
     localStorage.removeItem("admins");
-    navigate("/login");
+    toast.success("Logout successfull!", {
+            position: "top-right",
+            autoClose: 1500,
+            hideProgressBar: false,
+            closeOnClick: false,
+            pauseOnHover: false,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+          });
+          setTimeout(()=>{
+            navigate("/login");
+          }, 1500)
+   
   }
+
   useEffect(() => {
   const checkUser = async () => {
     const { data } = await supabase.auth.getSession();
@@ -62,6 +79,7 @@ function Dashboardsector() {
          
             ))}
             <button className="log" onClick={handleLogout}> <LogOut style={{marginTop:'5px'}}/>Logout  </button>
+            <ToastContainer />
            
           </div>
           
@@ -70,6 +88,7 @@ function Dashboardsector() {
         <div className="right-section">
         {activeindex === 0 && <Dashboardcontent />}
         {activeindex === 1 && <Skillanalysis />}
+        {activeindex === 3 && <Reccomendations />}
         {activeindex === 4 && <Profile />}
        
 

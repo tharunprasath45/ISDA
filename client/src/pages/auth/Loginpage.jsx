@@ -3,9 +3,11 @@ import icon from "../../assets/icons.png";
 import "./Login.css";
 import carrerforge from "../../assets/carrerforge.png";
 import { Link, useNavigate } from "react-router-dom";
-import { Eye, EyeOff, ArrowLeft } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { AUTH_TEXT } from "./Text";
 import supabase from "../../Supabase";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function Loginpage({ Welcome, Carrer, Access, Sign, Dont }) {
   const navigate = useNavigate();
@@ -24,31 +26,51 @@ function Loginpage({ Welcome, Carrer, Access, Sign, Dont }) {
       password: logindata.password,
     });
     if (error) {
-      alert(error.message);
+      toast.warn(error.message, {
+        position: "top-right",
+        autoClose: 1200,
+        hideProgressBar: true,
+        closeOnClick: false,
+        pauseOnHover: false,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
     } else {
-        const fullname = data.user?.user_metadata?.fullname || "";
+      const fullname = data.user?.user_metadata?.fullname || "";
 
-  localStorage.setItem(
-    "users",
-    JSON.stringify({
-      fullname,
-    })
-  );
-  localStorage.setItem("useremail", logindata.email);
+      localStorage.setItem(
+        "users",
+        JSON.stringify({
+          fullname,
+        }),
+      );
+      localStorage.setItem("useremail", logindata.email);
 
-  
-      localStorage.setItem("admins",
+      localStorage.setItem(
+        "admins",
         JSON.stringify({
           email: logindata.email,
-          role:'User',
+          role: "User",
           createdAt: new Date().toISOString(),
-        })
-      )
+        }),
+      );
       console.log("Logged success:", data);
-      
-      alert("Logged sucess",data);
-      navigate("/Dashboard");
-     
+
+      // alert("Logged sucess",data);
+      toast.success("Login successfull!", {
+        position: "bottom-left",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: false,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+      setTimeout(() => {
+        navigate("/Dashboard");
+      }, 1500);
     }
   };
   return (
@@ -100,7 +122,11 @@ function Loginpage({ Welcome, Carrer, Access, Sign, Dont }) {
             </Link>
           </p>
           {/* form */}
-          <form onSubmit={login} style={{ display: "flex", flexDirection: "column" }}>
+          <form
+            onSubmit={login}
+            style={{ display: "flex", flexDirection: "column" }}
+          >
+            <ToastContainer />
             <div className="field">
               <div className="field-header">
                 <label>Email</label>
@@ -134,13 +160,9 @@ function Loginpage({ Welcome, Carrer, Access, Sign, Dont }) {
                   className="toggle-password"
                   onClick={() => setshowpassword(!showpassword)}
                 >
-                  {showpassword ? (
-                   "SHOW"
-                  ) : (
-                    "HIDE"
-                  )}
+                  {showpassword ? "SHOW" : "HIDE"}
                 </button>
-          
+
                 <button
                   type="submit"
                   style={{
@@ -154,7 +176,6 @@ function Loginpage({ Welcome, Carrer, Access, Sign, Dont }) {
                     boxShadow: "#666 solid 1.5px 1px",
                   }}
                   className="Signin"
-                  
                 >
                   Sign In
                 </button>

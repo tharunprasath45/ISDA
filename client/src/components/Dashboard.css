@@ -169,7 +169,7 @@
 
   .span-welcome {
     background: linear-gradient(to right, #5b5b5b, #c2c4c9);
-  -webkit-background-clip: text;
+    -webkit-background-clip: text;
   color: transparent;
     font-weight: 700;
     font-size: 27px;

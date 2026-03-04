@@ -6,6 +6,8 @@ import { Save, User, Shield, Calendars, Plus, X, Trash2 } from "lucide-react";
 import Select from "react-select";
 import supabase from "../Supabase";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function Profile() {
   const [city, setcity] = useState(null);
@@ -103,7 +105,17 @@ function Profile() {
     const key = `profile_${adminInfo.email}`;
     const data = { userInfo, adminInfo, city, Experience, todos };
     localStorage.setItem(key, JSON.stringify(data));
-    alert("Your data will be saved!");
+    // alert("Your data will be saved!");
+    toast.success("Your data will be saved!", {
+                position: "top-center",
+                autoClose: 1500,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: false,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+              });
   };
   //----------------------------------------------------------
 
@@ -155,7 +167,9 @@ function Profile() {
         <button className="explore-btn-1" onClick={saveChanges}>
           <Save /> Save Changes
         </button>
+        
       </div>
+      <ToastContainer />
       {/* sub-active-btns */}
       <div className="tabs-container">
         <button
