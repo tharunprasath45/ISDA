@@ -1,26 +1,17 @@
 import React from 'react'
- import { ToastContainer, toast } from 'react-toastify';
- import 'react-toastify/dist/ReactToastify.css';
-function Reccomendations() {
-    const notify = () => toast("Wow so easy!");
-    const notification = () =>{
-      toast.info('🦄 Wow so easy!', {
-position: "top-center",
-autoClose: 5000,
-hideProgressBar: false,
-closeOnClick: false,
-pauseOnHover: true,
-draggable: true,
-progress: undefined,
-theme: "dark",
+import { header, renderheader } from "./Dashboardcontent";
 
-});
-    }
+function Reccomendations() {
+  const updateskills = header.map((intro)=>{
+    if(intro.dashboard === "Dashboard") return {dashboard :"Recommendations"}
+  return intro
+
+    
+  })
   return (
     <div>
-        <button onClick={notification}>Notify!</button>
-        <ToastContainer />
-      </div>
+      {renderheader(updateskills)}
+    </div>
   )
 }
 

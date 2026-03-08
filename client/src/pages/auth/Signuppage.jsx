@@ -7,6 +7,7 @@ import "./Signup.css";
 import supabase from "../../Supabase";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Select from "react-select";
 function Signuppage() {
   const points = [
     "Access real-time skill demand data",
@@ -28,10 +29,13 @@ function Signuppage() {
       options: {
         data: {
           fullname: signuppage.fullname,
+          role: userclients.value,
         },
       },
       email: signuppage.email,
       password: signuppage.password,
+      
+
     });
     if (error) {
       toast.warn(error.message, {
@@ -49,6 +53,8 @@ function Signuppage() {
         "users",
         JSON.stringify({
           fullname: signuppage.fullname,
+          role: userclients.value
+          
         }),
       );
       localStorage.setItem("useremail", signuppage.email);
@@ -66,7 +72,15 @@ function Signuppage() {
       });
     }
   };
+ const userclient = [
+    {
+      value: "jobseeker", label: "I'm a Jobseeker"
+    },
+    {value:'recruiter', label:"I'm a Recruiter"}
+  ]
 
+  const [userclients, setuserclients] = useState(userclient[0]);
+ 
   return (
     <div>
       <div className="login-container-1">
@@ -115,7 +129,8 @@ function Signuppage() {
                 </p>
               </Link>
               <p className="subtitle">Create your account</p>
-              <p style={{ color: "#666", marginTop: "12px", fontSize: "16px" }}>
+              <div style={{display:'flex',alignItems:"center",gap:'40px'}}>
+              <p style={{ color: "#666", marginTop: "1px", fontSize: "16px" }}>
                 Already have an account?{" "}
                 <Link
                   to="/login"
@@ -123,11 +138,25 @@ function Signuppage() {
                     textDecoration: "none",
                     cursor: "pointer",
                     color: "#6366f1",
+                    
+
                   }}
                 >
                   Sign in
                 </Link>
               </p>
+
+
+<Select  
+options = {userclient}
+value={userclients}
+onChange={setuserclients}
+ classNamePrefix="select"/>
+
+             
+              
+              </div>
+              
               <form
                 onSubmit={signup}
                 style={{ display: "flex", flexDirection: "column" }}

@@ -29,6 +29,7 @@ function Profile() {
   ];
   const [userInfo, setuserInfo] = useState({
     fullname: "",
+    role: "",
   });
   useEffect(() => {
     const storedUser = localStorage.getItem("users");
@@ -39,7 +40,6 @@ function Profile() {
 
   const [adminInfo, setadminInfo] = useState({
     email: "",
-    role: "",
     createdAt: "",
   });
   useEffect(() => {
@@ -179,12 +179,14 @@ function Profile() {
           Profile
         </button>
 
-        <button
-          className={`tab-btn ${activetabs === "skills" ? "active" : ""}`}
-          onClick={() => setactivetabs("skills")}
-        >
-          Skills
-        </button>
+       {userInfo.role === "jobseeker" && (
+  <button
+    className={`tab-btn ${activetabs === "skills" ? "active" : ""}`}
+    onClick={() => setactivetabs("skills")}
+  >
+    Skills
+  </button>
+)}
 
         <button
           className={`tab-btn ${activetabs === "Preferences" ? "active" : ""}`}
@@ -209,7 +211,7 @@ function Profile() {
               <div>
                 <h3 className="profile-name">{userInfo.fullname}</h3>
                 <p className="profile-email">{adminInfo.email}</p>
-                <span className="profile-badge">{adminInfo.role}</span>
+                <span className="profile-badge">{userInfo.role}</span>
               </div>
             </div>
 
@@ -290,7 +292,7 @@ function Profile() {
         </>
       )}
       {/* skills interest */}
-      {activetabs === "skills" && (
+      {userInfo.role === "jobseeker" &&  activetabs === "skills" && (
         <div className="profile-card">
           <h2 className="card-title">Your Skills</h2>
           <p className="card-subtitle">

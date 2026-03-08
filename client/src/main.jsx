@@ -7,6 +7,7 @@ import Login from "./pages/auth/Login.jsx";
 import Signup from "./pages/auth/Signup.jsx";
 import Dashboard from "./components/Dashboard.jsx";
 
+
 const router = createBrowserRouter([
    {
     path: "/",
@@ -23,7 +24,8 @@ const router = createBrowserRouter([
    {
     path: "/Dashboard",
     element: <Dashboard />
-  }
+  },
+  
 ])
 
 ReactDOM.createRoot(document.getElementById("root")).render(

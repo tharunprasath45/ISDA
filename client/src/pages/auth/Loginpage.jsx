@@ -38,11 +38,13 @@ function Loginpage({ Welcome, Carrer, Access, Sign, Dont }) {
       });
     } else {
       const fullname = data.user?.user_metadata?.fullname || "";
+      const role = data.user?.user_metadata?.role || "";
 
       localStorage.setItem(
         "users",
         JSON.stringify({
           fullname,
+          role,
         }),
       );
       localStorage.setItem("useremail", logindata.email);
@@ -51,11 +53,13 @@ function Loginpage({ Welcome, Carrer, Access, Sign, Dont }) {
         "admins",
         JSON.stringify({
           email: logindata.email,
-          role: "User",
           createdAt: new Date().toISOString(),
         }),
       );
       console.log("Logged success:", data);
+
+      console.log("user metadata:", data.user?.user_metadata);
+console.log("role:", data.user?.user_metadata?.role);
 
       // alert("Logged sucess",data);
       toast.success("Login successfull!", {
@@ -69,7 +73,16 @@ function Loginpage({ Welcome, Carrer, Access, Sign, Dont }) {
         theme: "dark",
       });
       setTimeout(() => {
-        navigate("/Dashboard");
+        if(role === "jobseeker"){
+ navigate("/Dashboard");
+        }
+        else if(role === "recruiter"){
+          navigate("/Dashboard")
+        }
+        else{
+          navigate("/login")
+        }
+       
       }, 1500);
     }
   };

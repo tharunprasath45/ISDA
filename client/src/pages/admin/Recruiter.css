@@ -1,0 +1,9 @@
+.overview{
+    font-size: 16px;
+    font-family: Inter;
+    padding: 22px 22px 3px;
+    color: gray;
+}
+.icon-data{
+    cursor: pointer;
+}

@@ -49,9 +49,13 @@ function Home({ buttons, smartcarrer, decision, carrerparagraph }) {
         </div>
         <div className="content-white">
           <div className="text-context">
+            <div style={{display:'flex', flexDirection:'row',alignItems:'center',gap:'40px'}}>
             <Link to="/login">
               <button className="Explore">{buttons}</button>
             </Link>
+          <Link to="/Sign" style={{textDecoration:'none'}}> <p style={{fontFamily:'Inter',fontSize:'17px',color:'#7d7b7b',cursor:'pointer'}}>Start Analyzing</p>
+          </Link> </div>
+            
 
             <p className="Smarter">{smartcarrer}</p>
             <p
