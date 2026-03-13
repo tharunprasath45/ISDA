@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./Profile.css";
 import "./Dashboard.css";
 import { header, renderheader } from "./Dashboardcontent";
@@ -96,6 +96,7 @@ function Profile() {
       setadminInfo(data.adminInfo || adminInfo);
       setcity(data.city || null);
       setExperience(data.Experience || null);
+      setProfileImage(data.profileImage || null);
       settoDos(data.todos || []);
     }
   }, [adminInfo.email]);
@@ -103,19 +104,19 @@ function Profile() {
   //  SAVE CHANGES (YOUR EXACT VERSION)
   const saveChanges = () => {
     const key = `profile_${adminInfo.email}`;
-    const data = { userInfo, adminInfo, city, Experience, todos };
+    const data = { userInfo, adminInfo, city, Experience, todos, profileImage };
     localStorage.setItem(key, JSON.stringify(data));
     // alert("Your data will be saved!");
     toast.success("Your data will be saved!", {
-                position: "top-center",
-                autoClose: 1500,
-                hideProgressBar: false,
-                closeOnClick: false,
-                pauseOnHover: false,
-                draggable: true,
-                progress: undefined,
-                theme: "dark",
-              });
+      position: "top-center",
+      autoClose: 1500,
+      hideProgressBar: false,
+      closeOnClick: false,
+      pauseOnHover: false,
+      draggable: true,
+      progress: undefined,
+      theme: "dark",
+    });
   };
   //----------------------------------------------------------
 
@@ -153,6 +154,25 @@ function Profile() {
     { value: "mongodb", label: "MongoDB" },
     { value: "java", label: "Java" },
   ];
+  // ----------------------profile avatar-----------------------------------------------
+  const [profileImage, setProfileImage] = useState(null);
+  const fileInputRef = useRef(null);
+  const handleAvatarClick = () => {
+    fileInputRef.current.click();
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProfileImage(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+  // ----------------------------------------------------------------------------------
+
   return (
     <div className="total-width-1">
       <div>{renderheader(updateskills)}</div>
@@ -167,7 +187,6 @@ function Profile() {
         <button className="explore-btn-1" onClick={saveChanges}>
           <Save /> Save Changes
         </button>
-        
       </div>
       <ToastContainer />
       {/* sub-active-btns */}
@@ -179,14 +198,14 @@ function Profile() {
           Profile
         </button>
 
-       {userInfo.role === "jobseeker" && (
-  <button
-    className={`tab-btn ${activetabs === "skills" ? "active" : ""}`}
-    onClick={() => setactivetabs("skills")}
-  >
-    Skills
-  </button>
-)}
+        {userInfo.role === "jobseeker" && (
+          <button
+            className={`tab-btn ${activetabs === "skills" ? "active" : ""}`}
+            onClick={() => setactivetabs("skills")}
+          >
+            Skills
+          </button>
+        )}
 
         <button
           className={`tab-btn ${activetabs === "Preferences" ? "active" : ""}`}
@@ -204,10 +223,31 @@ function Profile() {
 
             {/* Profile Header Row */}
             <div className="profile-top">
-              <div className="profile-avatar">
-                {userInfo.fullname?.[0]?.toUpperCase()}
+              {/* -----------------------profile-avatar--------------------------------------------- */}
+              <div className="profile-avatar" onClick={handleAvatarClick}>
+                {profileImage ? (
+                  <img
+                    src={profileImage}
+                    alt=""
+                    className="avatar-img"
+                    onError={() => setProfileImage(null)}
+                  />
+                ) : (
+                  <span className="avatar-letter">
+                    {userInfo.fullname?.trim()?.charAt(0)?.toUpperCase() || "U"}
+                  </span>
+                )}
               </div>
 
+              <input
+                type="file"
+                accept="image/*"
+                ref={fileInputRef}
+                style={{ display: "none" }}
+                onChange={handleImageChange}
+              />
+
+              {/* --------------------------------------------------------------------------------------- */}
               <div>
                 <h3 className="profile-name">{userInfo.fullname}</h3>
                 <p className="profile-email">{adminInfo.email}</p>
@@ -292,7 +332,7 @@ function Profile() {
         </>
       )}
       {/* skills interest */}
-      {userInfo.role === "jobseeker" &&  activetabs === "skills" && (
+      {userInfo.role === "jobseeker" && activetabs === "skills" && (
         <div className="profile-card">
           <h2 className="card-title">Your Skills</h2>
           <p className="card-subtitle">

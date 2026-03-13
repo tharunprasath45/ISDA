@@ -1,7 +1,17 @@
 import React, { useState } from "react";
 import "./Dashboard.css";
 import icon from "../assets/icons.png";
-import { LayoutDashboard, Search, TrendingUp, Disc2, User, Users, LogOut, SquarePlus, BriefcaseBusiness } from "lucide-react";
+import {
+  LayoutDashboard,
+  Search,
+  TrendingUp,
+  Disc2,
+  User,
+  Users,
+  LogOut,
+  SquarePlus,
+  BriefcaseBusiness,
+} from "lucide-react";
 import Dashboardcontent from "./Dashboardcontent";
 import Skillanalysis from "./Skillanalysis";
 import Profile from "./Profile";
@@ -13,72 +23,72 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Jobinsights from "./Jobinsights";
 import RecuiterDashboard from "../pages/admin/RecruiterDashboard";
+import Jobpost from "../pages/admin/Jobpost";
+import Postedjobs from "../pages/admin/Postedjobs";
+import Applicants from "../pages/admin/Applicants";
 
 function Dashboardsector() {
   const [activeindex, setActiveIndex] = useState(0);
-  
+
   const navigate = useNavigate();
 
-  const handleLogout = async() =>{
+  const handleLogout = async () => {
     await supabase.auth.signOut();
     localStorage.removeItem("users");
     localStorage.removeItem("admins");
     toast.success("Logout successfull!", {
-            position: "top-right",
-            autoClose: 1500,
-            hideProgressBar: false,
-            closeOnClick: false,
-            pauseOnHover: false,
-            draggable: true,
-            progress: undefined,
-            theme: "dark",
-          });
-          setTimeout(()=>{
-            navigate("/login");
-          }, 1500)
-   
-  }
+      position: "top-right",
+      autoClose: 1500,
+      hideProgressBar: false,
+      closeOnClick: false,
+      pauseOnHover: false,
+      draggable: true,
+      progress: undefined,
+      theme: "dark",
+    });
+    setTimeout(() => {
+      navigate("/login");
+    }, 1500);
+  };
   //-------------------getinto dashboard----------------------------
   const [userRole, setUserRole] = useState("");
 
   useEffect(() => {
-  const checkUser = async () => {
-    const { data } = await supabase.auth.getSession();
+    const checkUser = async () => {
+      const { data } = await supabase.auth.getSession();
 
-    if (!data.session) {
-      navigate("/login");
-      return;
-    }
+      if (!data.session) {
+        navigate("/login");
+        return;
+      }
 
-    const storedUser = localStorage.getItem("users");
-    if (storedUser) {
-      const parsedUser = JSON.parse(storedUser);
-      setUserRole(parsedUser.role);
-    }
-  };
+      const storedUser = localStorage.getItem("users");
+      if (storedUser) {
+        const parsedUser = JSON.parse(storedUser);
+        setUserRole(parsedUser.role);
+      }
+    };
 
-  checkUser();
-}, []);
-//--------------------------------------------------------------------
+    checkUser();
+  }, []);
+  //--------------------------------------------------------------------
   const jobseekerNavItems = [
     { image: <LayoutDashboard />, label: "Dashboard" },
     { image: <User />, label: "Profile" },
     { image: <Search />, label: "Skill Analysis" },
     { image: <TrendingUp />, label: "Browse Jobs" },
     { image: <Disc2 />, label: "Applied Jobs" },
-    
-    
   ];
 
   const recruiterNavItems = [
-  { image: <LayoutDashboard />, label: "Dashboard" },
-  { image: <User />, label: "Profile" },
-  { image:  <SquarePlus />, label: "Post Jobs" },
-  { image:  <BriefcaseBusiness />, label: "Jobs Posted" },
-  { image:  <Users />, label: "Applicants" },
-  
-];
-const navitems = userRole === "recruiter" ? recruiterNavItems : jobseekerNavItems;
+    { image: <LayoutDashboard />, label: "Dashboard" },
+    { image: <User />, label: "Profile" },
+    { image: <SquarePlus />, label: "Post Jobs" },
+    { image: <BriefcaseBusiness />, label: "Jobs Posted" },
+    { image: <Users />, label: "Applicants" },
+  ];
+  const navitems =
+    userRole === "recruiter" ? recruiterNavItems : jobseekerNavItems;
 
   return (
     <div className="total-width">
@@ -96,42 +106,37 @@ const navitems = userRole === "recruiter" ? recruiterNavItems : jobseekerNavItem
               >
                 <span>{item.image}</span>
                 <span>{item.label}</span>
-                
-                
               </div>
-         
             ))}
-            <button className="log" onClick={handleLogout}> <LogOut style={{marginTop:'5px'}}/>Logout  </button>
+            <button className="log" onClick={handleLogout}>
+              {" "}
+              <LogOut style={{ marginTop: "5px" }} />
+              Logout{" "}
+            </button>
             <ToastContainer />
-           
           </div>
-          
         </div>
 
         <div className="right-section">
-        {userRole === "jobseeker" && (
-    <>
-      {activeindex === 0 && <Dashboardcontent />}
-      {activeindex === 1 && <Profile />}
-      {activeindex === 2 && <Skillanalysis />}
-      {activeindex === 3 && <Jobinsights />}
-      {activeindex === 4 && <Reccomendations />}
-      
-    </>
-  )}
+          {userRole === "jobseeker" && (
+            <>
+              {activeindex === 0 && <Dashboardcontent />}
+              {activeindex === 1 && <Profile />}
+              {activeindex === 2 && <Skillanalysis />}
+              {activeindex === 3 && <Jobinsights />}
+              {activeindex === 4 && <Reccomendations />}
+            </>
+          )}
 
-  {userRole === "recruiter" && (
-    <>
-      {activeindex === 0 && <RecuiterDashboard />}
-      {activeindex === 1 && <Profile />}
-      {activeindex === 2 && <div>Post Jobs Page</div>}
-      {activeindex === 3 && <div>Manage Jobs Page</div>}
-      {activeindex === 4 && <div>Applicants Page</div>}
-     
-    </>
-  )}
-       
-
+          {userRole === "recruiter" && (
+            <>
+              {activeindex === 0 && <RecuiterDashboard />}
+              {activeindex === 1 && <Profile />}
+              {activeindex === 2 && <div><Jobpost /></div>}
+              {activeindex === 3 && <div><Postedjobs /></div>}
+              {activeindex === 4 && <div><Applicants /></div>}
+            </>
+          )}
         </div>
       </div>
     </div>

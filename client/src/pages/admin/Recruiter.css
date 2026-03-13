@@ -7,3 +7,27 @@
 .icon-data{
     cursor: pointer;
 }
+.salary-range {
+  display: flex;
+  gap: 12px;
+}
+
+.salary-range input {
+  flex: 1;
+}
+#arrowrightline{
+  margin-left: 84%;
+  display: flex;
+  align-items: center;
+  font-size: 17px;
+  gap: 10px;
+  font-family: Quicksand;
+  color: rgb(141, 140, 140);
+  cursor: pointer;
+}
+#arrowrightline:hover{
+  color: black;
+}
+.form-group textarea{
+  height: 110px;
+}
