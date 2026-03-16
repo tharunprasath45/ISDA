@@ -15,7 +15,14 @@ const MyChart = ({ height = 300 }) => {
     chartRef.current = new Chart(ctx, {
       type: "bar",
       data: {
-        labels: ["Jan-Feb", "Mar-Apr", "May-Jun", "Jul-Aug", "Sep-Oct", "Nov-Dec"],
+        labels: [
+          "Jan-Feb",
+          "Mar-Apr",
+          "May-Jun",
+          "Jul-Aug",
+          "Sep-Oct",
+          "Nov-Dec",
+        ],
         datasets: [
           {
             label: "Employment Insights (2025)", // ✅ changed name
@@ -43,8 +50,8 @@ const MyChart = ({ height = 300 }) => {
             },
           },
           y: {
-            min: 0,      // ✅ side value start
-            max: 25,     // ✅ side value end
+            min: 0, // ✅ side value start
+            max: 25, // ✅ side value end
             ticks: {
               stepSize: 5, // ✅ step size
             },

@@ -7,12 +7,9 @@
   margin: 0 auto;
 }
 
-.leftlogin-panel{
-    
+.leftlogin-panel {
   width: 50%;
   background: #fff;
-
-
 }
 
 /* Right PANEL */
@@ -20,7 +17,12 @@
   width: 50%;
   position: relative;
   overflow: hidden;
-  background: linear-gradient(135deg, rgba(99,102,241,0.05), #fff, rgba(1, 20, 22, 0.05));
+  background: linear-gradient(
+    135deg,
+    rgba(99, 102, 241, 0.05),
+    #fff,
+    rgba(1, 20, 22, 0.05)
+  );
 }
 
 .grid-overlay {
@@ -28,7 +30,7 @@
   inset: 0;
   background-image:
     linear-gradient(rgba(4, 5, 24, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(99,102,241,0.03) 3px, transparent 3px);
+    linear-gradient(90deg, rgba(99, 102, 241, 0.03) 3px, transparent 3px);
   background-size: 40px 40px;
 }
 
@@ -111,8 +113,8 @@
   font-size: 18px;
   color: #555;
 }
-.badgepoint{
-    margin-top: 30px;
+.badgepoint {
+  margin-top: 30px;
 }
 
 .badgepoint p {
@@ -131,8 +133,7 @@
   margin-bottom: 6px;
 }
 
-
-.field-1 input{
+.field-1 input {
   padding: 16px;
   margin-top: 6px;
   max-width: 462.5px;
@@ -140,13 +141,12 @@
   border-radius: 6px;
   border: 2px solid #ccc;
   box-shadow: #666 1.5px 1px;
-
 }
-.field-1 input::placeholder{
+.field-1 input::placeholder {
   font-size: 15px;
   font-family: Inter;
 }
-.field-1 input:focus{
+.field-1 input:focus {
   border-color: 2px solid #666;
 }
 
@@ -163,27 +163,22 @@
   font-weight: 500;
 }
 
-
-.select__control{
-  margin-top:12px !important;
-  border-radius:8px !important;
+.select__control {
+  margin-top: 12px !important;
+  border-radius: 8px !important;
   border: none !important;
   position: relative !important;
   bottom: 5.5px !important;
-  
 }
 
-.select__option{
-  padding:10px !important;
+.select__option {
+  padding: 10px !important;
 }
 
-.select__option--is-selected{
-  background:#7d7c7c !important;
-  color:white !important;
+.select__option--is-selected {
+  background: #7d7c7c !important;
+  color: white !important;
 }
-
-
-
 
 /* max - min width */
 @media (max-width: 767px) {

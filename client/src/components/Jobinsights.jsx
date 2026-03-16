@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from "react";
 import "./jobinsights.css";
+import { Link } from "react-router-dom";
 import { renderheader, header } from "./Dashboardcontent";
-import { Bookmark, MapPin } from "lucide-react";
+import {
+  Bookmark,
+  MapPin,
+  Briefcase,
+  IndianRupee,
+  Building2,
+} from "lucide-react";
 
 function Jobinsights() {
   const updateskills = header.map((intro) => {
@@ -17,23 +24,28 @@ function Jobinsights() {
   }, []);
 
   return (
-    <div className="total-width-1">
+    <div className="jobinsights-page">
       <div>{renderheader(updateskills)}</div>
-      <p className="overview">View and apply to the latest job postings.</p>
+
+      <div className="jobinsights-top">
+
+        <p className="jobinsights-subtext">
+          Browse the latest openings and view job details in a clean, modern
+          layout.
+        </p>
+      </div>
 
       <div className="job-wrapper">
         {findjobs.length === 0 ? (
-          <div className="profile-card empty-card">
-            <h2 className="card-title">No jobs posted yet</h2>
-            <p className="card-subtitle">
-              Once a recruiter posts a job, it will appear here.
-            </p>
+          <div className="empty-card">
+            <h2>No jobs posted yet</h2>
+            <p>Once a recruiter posts a job, it will appear here.</p>
           </div>
         ) : (
           <div className="job-grid">
             {findjobs.map((findjob) => (
               <div key={findjob.id} className="job-card">
-                <div className="job-top">
+                <div className="job-card-header">
                   <div className="job-company-block">
                     <div className="job-logo-circle">
                       <span>
@@ -41,41 +53,71 @@ function Jobinsights() {
                       </span>
                     </div>
 
-                    <div>
+                    <div className="job-company-info">
                       <h4 className="job-company-name">
-                        {findjob.companyName}
+                        {findjob.companyName || "Company Name"}
                       </h4>
                       <p className="job-location">
-                        <MapPin color="black" size={15} />
+                        <MapPin size={15} />
                         {findjob.location || "Location not provided"}
                       </p>
                     </div>
                   </div>
 
-                  <button className="bookmark-circle">
+                  <button className="bookmark-circle" type="button">
                     <Bookmark size={18} />
                   </button>
                 </div>
 
-                <h2 className="job-title">{findjob.jobTitle}</h2>
+                <div className="job-main-content">
+                  <h2 className="job-title">
+                    {findjob.jobTitle || "Job Title"}
+                  </h2>
 
-                <div className="job-tags">
-                  <span className="job-tag">
-                    {findjob.employmentType || "Full-time"}
-                  </span>
-                  <span className="job-tag">
-                    {findjob.experienceLevel || "Mid"}
-                  </span>
+                  <div className="job-meta-line">
+                    <span>
+                      <Briefcase size={15} />
+                      {findjob.employmentType || "Full-time"}
+                    </span>
+                    <span>
+                      <Building2 size={15} />
+                      {findjob.experienceLevel || "Mid Level"}
+                    </span>
+                  </div>
+
+                  <div className="job-tags">
+                    <span className="job-tag">{findjob.category || "IT"}</span>
+                    <span className="job-tag">
+                      {findjob.employmentType || "Full-time"}
+                    </span>
+                    <span className="job-tag">
+                      {findjob.experienceLevel || "Mid"}
+                    </span>
+                  </div>
+
+                  <p className="job-description-preview">
+                    {findjob.description
+                      ? findjob.description.slice(0, 120) + "..."
+                      : "No description available for this role."}
+                  </p>
                 </div>
 
-                <div className="job-card-bottom">
+                <div className="job-card-footer">
                   <p className="job-salary">
-                    ₹{findjob.minSalary || "40000"} - ₹
-                    {findjob.maxSalary || "60000"}
+                    <IndianRupee size={18} />
+                    {findjob.minSalary || "40000"} - {findjob.maxSalary || "60000"}
                     <span> /month</span>
                   </p>
 
-                  <button className="job-btn">View Details</button>
+                  <div className="job-action-buttons">
+                    <Link to={`/ViewDetails/${findjob.id}`}>
+                      <button className="job-btn view-btn" type="button">
+                        View Details
+                      </button>
+                    </Link>
+
+                   
+                  </div>
                 </div>
               </div>
             ))}

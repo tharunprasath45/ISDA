@@ -83,12 +83,17 @@ function Jobpost() {
     const updatedJobs = [...existingJobs, newJob];
 
     localStorage.setItem("postedJobs", JSON.stringify(updatedJobs));
-
+// ------------------------------------------------------------------------------------------------------------
     const findjob = JSON.parse(localStorage.getItem("jobinsights")) || [];
     const updatefindjobs = [...findjob, newJob];
     
     localStorage.setItem("jobinsights", JSON.stringify(updatefindjobs));
-
+// ------------------------------------------------------------------------------------------------------------
+    // const viewjob = JSON.parse(localStorage.getItem("viewjobs")) || [];
+    // const updateviewjobs = [...viewjob, newJob];
+    
+    // localStorage.setItem("viewjobs", JSON.stringify(updateviewjobs));
+// ------------------------------------------------------------------------------------------------------------
     //alert("Job posted successfully!");
     toast.success("Job posted successfully!", {
       position: "top-center",
@@ -297,7 +302,7 @@ function Jobpost() {
             <div className="form-group">
               <label>Website</label>
               <input
-                type="text"
+                type="url"
                 value={company.company_website}
                 onChange={(e) =>
                   setCompany({ ...company, company_website: e.target.value })

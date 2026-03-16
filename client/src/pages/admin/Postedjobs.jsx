@@ -23,9 +23,17 @@ function Postedjobs() {
   }, []);
 
   const handleDelete = (id) => {
-    const filteredJobs = jobs.filter((job) => job.id !== id);
-    setJobs(filteredJobs);
-    localStorage.setItem("postedJobs", JSON.stringify(filteredJobs));
+    const filteredPostedJobs = jobs.filter((job) => job.id !== id);
+    setJobs(filteredPostedJobs);
+    localStorage.setItem("postedJobs", JSON.stringify(filteredPostedJobs));
+
+    const savedInsights = JSON.parse(localStorage.getItem("jobinsights")) || [];
+    const filteredInsights = savedInsights.filter((job) => job.id !== id);
+    localStorage.setItem("jobinsights", JSON.stringify(filteredInsights));
+
+    const savedViewJobs = JSON.parse(localStorage.getItem("viewjobs")) || [];
+    const filteredViewJobs = savedViewJobs.filter((job) => job.id !== id);
+    localStorage.setItem("viewjobs", JSON.stringify(filteredViewJobs));
   };
 
   return (
@@ -79,13 +87,25 @@ function Postedjobs() {
                         margin: 0,
                         fontSize: "20px",
                         fontWeight: "700",
-                        fontFamily:'Inter'
+                        fontFamily: "Inter",
                       }}
                     >
                       {job.jobTitle}
                     </h2>
-                    <p style={{ margin: "13px 0", color: "#666", fontFamily:'Quicksand',display:'flex', alignItems:'center',gap:'5px', }}>
-                      <Building2 size={19} style={{ marginRight: "6px",color:'black' }} />
+                    <p
+                      style={{
+                        margin: "13px 0",
+                        color: "#666",
+                        fontFamily: "Quicksand",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "5px",
+                      }}
+                    >
+                      <Building2
+                        size={19}
+                        style={{ marginRight: "6px", color: "black" }}
+                      />
                       {job.companyName}
                     </p>
                   </div>
@@ -104,23 +124,68 @@ function Postedjobs() {
                     <Trash2 size={18} />
                   </button>
                 </div>
-              
-                <p style={{ margin: "15px 0", color: "#444", fontFamily:'Quicksand', display:'flex', alignItems:'center',gap:'5px'}}>
-                  <MapPin size={19} style={{ marginRight: "6px",color:'black' }} />
+
+                <p
+                  style={{
+                    margin: "15px 0",
+                    color: "#444",
+                    fontFamily: "Quicksand",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "5px",
+                  }}
+                >
+                  <MapPin
+                    size={19}
+                    style={{ marginRight: "6px", color: "black" }}
+                  />
                   {job.location}
                 </p>
 
-                <p style={{ margin: "15px 0", color: "#444", fontFamily:'Quicksand', display:'flex', alignItems:'center',gap:'5px' }}>
-                  <Briefcase size={19}  style={{ marginRight: "6px" , color:'black'}} />
+                <p
+                  style={{
+                    margin: "15px 0",
+                    color: "#444",
+                    fontFamily: "Quicksand",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "5px",
+                  }}
+                >
+                  <Briefcase
+                    size={19}
+                    style={{ marginRight: "6px", color: "black" }}
+                  />
                   {job.employmentType} | {job.experienceLevel}
                 </p>
 
-                <p style={{ margin: "15px 0", color: "#444", fontFamily:'Quicksand', display:'flex', alignItems:'center',gap:'5px' }}>
-                  <Wallet size={19} style={{ marginRight: "6px",color:'black' }} />₹
-                  {job.minSalary} - ₹{job.maxSalary}
+                <p
+                  style={{
+                    margin: "15px 0",
+                    color: "#444",
+                    fontFamily: "Quicksand",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "5px",
+                  }}
+                >
+                  <Wallet
+                    size={19}
+                    style={{ marginRight: "6px", color: "black" }}
+                  />
+                  ₹{job.minSalary} - ₹{job.maxSalary}
                 </p>
 
-                <p style={{ margin: "15px 0", color: "#444", fontFamily:'Quicksand', display:'flex', alignItems:'center',gap:'5px' }}>
+                <p
+                  style={{
+                    margin: "15px 0",
+                    color: "#444",
+                    fontFamily: "Quicksand",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "5px",
+                  }}
+                >
                   <strong>Category:</strong> {job.category}
                 </p>
 
@@ -129,8 +194,10 @@ function Postedjobs() {
                     marginTop: "16px",
                     fontSize: "13px",
                     color: "#888",
-                    fontFamily:'Quicksand',
-                    display:'flex',alignItems:'center',gap:'5px'
+                    fontFamily: "Quicksand",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "5px",
                   }}
                 >
                   Posted on: {job.postedAt}
