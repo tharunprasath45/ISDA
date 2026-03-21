@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
+import Select from "react-select";
+import axios from "axios";
 import { renderheader, header } from "../../components/Dashboardcontent";
+import { Trash2 } from "lucide-react";
 
 function Applicants() {
   const updateskills = header.map((intro) => {
@@ -9,11 +12,63 @@ function Applicants() {
 
   const [applicants, setApplicants] = useState([]);
 
+  const process = [
+    { value: "Applied", label: "Applied" },
+    { value: "Selected", label: "Selected" },
+    { value: "Rejected", label: "Rejected" },
+  ];
+
+  const recruiter = JSON.parse(localStorage.getItem("admins")) || {};
+  const recruiterEmail = recruiter.email;
+
+  const fetchApplicants = async () => {
+    try {
+      const res = await axios.get(
+        `http://localhost:5000/api/applicants/recruiter/${encodeURIComponent(recruiterEmail)}`,
+      );
+      setApplicants(res.data);
+    } catch (error) {
+      console.error("Error fetching applicants:", error);
+    }
+  };
+
   useEffect(() => {
-    const savedApplicants =
-      JSON.parse(localStorage.getItem("applicants")) || [];
-    setApplicants(savedApplicants);
-  }, []);
+    if (recruiterEmail) {
+      fetchApplicants();
+    }
+  }, [recruiterEmail]);
+
+  const handleStatusChange = async (selected, applicantId) => {
+    try {
+      await axios.put(
+        `http://localhost:5000/api/applicants/${applicantId}/status`,
+        {
+          status: selected.value,
+        },
+      );
+
+      setApplicants((prev) =>
+        prev.map((applicant) =>
+          applicant._id === applicantId
+            ? { ...applicant, status: selected.value }
+            : applicant,
+        ),
+      );
+    } catch (error) {
+      console.error("Error updating status:", error);
+    }
+  };
+
+  const handleDelete = async (applicantId) => {
+    try {
+      await axios.delete(`http://localhost:5000/api/applicants/${applicantId}`);
+      setApplicants((prev) =>
+        prev.filter((applicant) => applicant._id !== applicantId),
+      );
+    } catch (error) {
+      console.error("Error deleting applicant:", error);
+    }
+  };
 
   return (
     <div>
@@ -25,13 +80,14 @@ function Applicants() {
         {applicants.length === 0 ? (
           <div className="no-applicants-box">
             <h3>No applicants yet</h3>
-            <p>No one has applied for any job yet.</p>
+            <p>No one has applied for your jobs yet.</p>
           </div>
         ) : (
           <div className="applicants-list">
             {applicants.map((applicant) => (
-              <div key={applicant.applicantId} className="applicant-card">
+              <div key={applicant._id} className="applicant-card">
                 <h3>{applicant.name}</h3>
+
                 <p>
                   <strong>Email:</strong> {applicant.email}
                 </p>
@@ -57,6 +113,27 @@ function Applicants() {
                     Download Resume
                   </a>
                 )}
+
+                <Select
+                  className="status-select"
+                  classNamePrefix="status"
+                  options={process}
+                  value={
+                    process.find((item) => item.value === applicant.status) ||
+                    process[0]
+                  }
+                  onChange={(selected) =>
+                    handleStatusChange(selected, applicant._id)
+                  }
+                />
+
+                <button
+                  className="resume-btn"
+                  onClick={() => handleDelete(applicant._id)}
+                >
+                  <Trash2 size={14} />
+                  Delete
+                </button>
               </div>
             ))}
           </div>

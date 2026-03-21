@@ -1,90 +1,128 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import { header, renderheader } from "./Dashboardcontent";
-import { Briefcase, CircleStar, Delete, Download, MapPin, Trash2 } from 'lucide-react';
+import { CircleStar, MapPin, Trash2 } from "lucide-react";
 
-function Reccomendations() {
-  const updateskills = header.map((intro)=>{
-    if(intro.dashboard === "Dashboard") return {dashboard :"Applied Jobs"}
-  return intro
-});
- const [appliedJob, setAppliedJob] = useState([]);
-useEffect(()=>{
-  const jobs = JSON.parse(localStorage.getItem("appliedJobs")) || [];
-  setAppliedJob(jobs)
-}, []);
-// const handleResumeClick = (job) => {
-//     if (!job.resumeData) {
-//       alert("No resume found");
-//       return;
-//     }
+function Recommendations() {
+  const updateskills = header.map((intro) => {
+    if (intro.dashboard === "Dashboard") return { dashboard: "Applied Jobs" };
+    return intro;
+  });
 
-//     window.open(job.resumeData, "_blank");
-//   };
+  const [appliedJob, setAppliedJob] = useState([]);
 
+  const user = JSON.parse(localStorage.getItem("users")) || {};
+  const userEmail = user.email;
 
-// delete option
-  const handleDelete = (jobId) => {
-    const updatedJobs = appliedJob.filter(
-      (job) => String(job.id) !== String(jobId)
-    );
+  const fetchAppliedJobs = async () => {
+    try {
+      const res = await axios.get(
+        `http://localhost:5000/api/applicants/user/${encodeURIComponent(userEmail)}`,
+      );
+      setAppliedJob(res.data);
+    } catch (error) {
+      console.error("Error fetching applied jobs:", error);
+    }
+  };
 
-    setAppliedJob(updatedJobs);
-    localStorage.setItem("appliedJobs", JSON.stringify(updatedJobs));
+  useEffect(() => {
+    if (userEmail) {
+      fetchAppliedJobs();
+    }
+  }, [userEmail]);
+
+  const handleDelete = async (jobId) => {
+    try {
+      await axios.delete(`http://localhost:5000/api/applicants/${jobId}`);
+      setAppliedJob((prev) => prev.filter((job) => job._id !== jobId));
+    } catch (error) {
+      console.error("Error deleting applied job:", error);
+    }
+  };
+
+  const getBadgeClass = (status) => {
+    if (status === "Selected") return "selected-text";
+    if (status === "Rejected") return "rejected-text";
+    return "applied-text";
   };
 
   return (
     <div>
       {renderheader(updateskills)}
- <div className="applied-jobs-page">
-     
-      <p>Track the jobs you've applied for and download your resumes.</p>
 
-      {appliedJob.length === 0 ? (
-        <div className="no-applied-jobs">
-          <p>No jobs applied yet.</p>
-        </div>
-      ) : (
-        appliedJob.map((job) => (
-          <div className="applied-job-card" key={job.id}>
-            <div className="applied-job-left">
-              <h2>{job.jobTitle}</h2>
-              <div className="applied-job-meta">
-                <span>
-                   <CircleStar  size={16} style={{display:'flex',color:'green'}}/>
-                  Applied
-                </span>
-                <span>
-                  <MapPin size={15} color='orange' />
-                  {job.location || "Unknown location"}
-                </span>
+      <div className="applied-jobs-page">
+        <p>Track the jobs you've applied for and download your resumes.</p>
+
+        {appliedJob.length === 0 ? (
+          <div className="no-applied-jobs">
+            <p>No jobs applied yet.</p>
+          </div>
+        ) : (
+          appliedJob.map((job) => (
+            <div className="applied-job-card" key={job._id}>
+              <div className="applied-job-left">
+                <h2>{job.jobTitle}</h2>
+
+                <div className="applied-job-meta">
+                  <span
+                    className={getBadgeClass(job.status)}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "6px",
+                    }}
+                  >
+                    <CircleStar
+                      size={16}
+                      color={
+                        job.status === "Selected"
+                          ? "green"
+                          : job.status === "Rejected"
+                            ? "red"
+                            : "orange"
+                      }
+                    />
+                    {job.status}
+                  </span>
+
+                  <span
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "6px",
+                    }}
+                  >
+                    <MapPin size={15} color="orange" />
+                    {job.location || "Unknown location"}
+                  </span>
+                </div>
+              </div>
+
+              <div className="applied-job-right">
+                <span className={getBadgeClass(job.status)}>{job.status}</span>
+
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <button
+                    className="resume-btn"
+                    onClick={() => handleDelete(job._id)}
+                  >
+                    <Trash2 size={14} />
+                    Delete
+                  </button>
+                </div>
               </div>
             </div>
-
-            <div className="applied-job-right">
-              <span className="applied-badge">Applied</span>
-              {/* <button className="resume-btn" onClick={()=>handleResumeClick(job)}>
-                <Download size={16} />
-                Resume
-              </button> */}
-            <div style={{display:'flex',alignItems:'center',justifyContent:'center'}}>
-               <button className="resume-btn" onClick={()=>handleDelete(job.id)}>
-                <Trash2 size={14} />
-                Delete
-              </button></div>
-           
-            </div>
-            
-              
-             
-           
-          </div>
-        ))
-      )}
+          ))
+        )}
+      </div>
     </div>
-  
-
-    </div>
-  )
+  );
 }
 
-export default Reccomendations
+export default Recommendations;

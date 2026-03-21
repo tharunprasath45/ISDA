@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./Dashboard.css";
 import icon from "../assets/icons.png";
 import {
@@ -17,7 +17,6 @@ import Skillanalysis from "./Skillanalysis";
 import Profile from "./Profile";
 import { useNavigate } from "react-router-dom";
 import supabase from "../Supabase";
-import { useEffect } from "react";
 import Reccomendations from "./Reccomendations";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -29,29 +28,31 @@ import Applicants from "../pages/admin/Applicants";
 
 function Dashboardsector() {
   const [activeindex, setActiveIndex] = useState(0);
+  const [userRole, setUserRole] = useState("");
 
   const navigate = useNavigate();
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
+
     localStorage.removeItem("users");
     localStorage.removeItem("admins");
-    toast.success("Logout successfull!", {
+    localStorage.removeItem("useremail");
+
+    toast.success("Logout successful!", {
       position: "top-right",
       autoClose: 1500,
       hideProgressBar: false,
       closeOnClick: false,
       pauseOnHover: false,
       draggable: true,
-      progress: undefined,
       theme: "dark",
     });
+
     setTimeout(() => {
       navigate("/login");
     }, 1500);
   };
-  //-------------------getinto dashboard----------------------------
-  const [userRole, setUserRole] = useState("");
 
   useEffect(() => {
     const checkUser = async () => {
@@ -62,16 +63,31 @@ function Dashboardsector() {
         return;
       }
 
-      const storedUser = localStorage.getItem("users");
-      if (storedUser) {
-        const parsedUser = JSON.parse(storedUser);
-        setUserRole(parsedUser.role);
+      const storedUser = JSON.parse(localStorage.getItem("users")) || null;
+      const storedAdmin = JSON.parse(localStorage.getItem("admins")) || null;
+
+      if (storedAdmin?.role === "recruiter") {
+        setUserRole("recruiter");
+        setActiveIndex(0);
+      } else if (storedUser?.role === "jobseeker") {
+        setUserRole("jobseeker");
+        setActiveIndex(0);
+      } else {
+        const sessionRole = data.session.user?.user_metadata?.role || "";
+
+        if (sessionRole === "recruiter") {
+          setUserRole("recruiter");
+        } else if (sessionRole === "jobseeker") {
+          setUserRole("jobseeker");
+        } else {
+          navigate("/login");
+        }
       }
     };
 
     checkUser();
-  }, []);
-  //--------------------------------------------------------------------
+  }, [navigate]);
+
   const jobseekerNavItems = [
     { image: <LayoutDashboard />, label: "Dashboard" },
     { image: <User />, label: "Profile" },
@@ -87,6 +103,7 @@ function Dashboardsector() {
     { image: <BriefcaseBusiness />, label: "Jobs Posted" },
     { image: <Users />, label: "Applicants" },
   ];
+
   const navitems =
     userRole === "recruiter" ? recruiterNavItems : jobseekerNavItems;
 
@@ -108,11 +125,12 @@ function Dashboardsector() {
                 <span>{item.label}</span>
               </div>
             ))}
+
             <button className="log" onClick={handleLogout}>
-              {" "}
               <LogOut style={{ marginTop: "5px" }} />
-              Logout{" "}
+              Logout
             </button>
+
             <ToastContainer />
           </div>
         </div>
@@ -132,9 +150,9 @@ function Dashboardsector() {
             <>
               {activeindex === 0 && <RecuiterDashboard />}
               {activeindex === 1 && <Profile />}
-              {activeindex === 2 && <div><Jobpost /></div>}
-              {activeindex === 3 && <div><Postedjobs /></div>}
-              {activeindex === 4 && <div><Applicants /></div>}
+              {activeindex === 2 && <Jobpost />}
+              {activeindex === 3 && <Postedjobs />}
+              {activeindex === 4 && <Applicants />}
             </>
           )}
         </div>

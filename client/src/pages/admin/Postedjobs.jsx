@@ -1,13 +1,7 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 import { renderheader, header } from "../../components/Dashboardcontent";
-import {
-  Briefcase,
-  MapPin,
-  Building2,
-  Trash2,
-  Globe,
-  Wallet,
-} from "lucide-react";
+import { Briefcase, MapPin, Building2, Trash2, Wallet } from "lucide-react";
 
 function Postedjobs() {
   const updateskills = header.map((intro) => {
@@ -17,23 +11,35 @@ function Postedjobs() {
 
   const [jobs, setJobs] = useState([]);
 
+  const recruiter = JSON.parse(localStorage.getItem("admins")) || {};
+  const recruiterEmail = recruiter.email;
+
+  const fetchPostedJobs = async () => {
+    try {
+      const res = await axios.get(
+        `http://localhost:5000/api/jobsdb/recruiter/${encodeURIComponent(
+          recruiterEmail,
+        )}`,
+      );
+      setJobs(res.data);
+    } catch (error) {
+      console.error("Error fetching posted jobs:", error);
+    }
+  };
+
   useEffect(() => {
-    const savedJobs = JSON.parse(localStorage.getItem("postedJobs")) || [];
-    setJobs(savedJobs);
-  }, []);
+    if (recruiterEmail) {
+      fetchPostedJobs();
+    }
+  }, [recruiterEmail]);
 
-  const handleDelete = (id) => {
-    const filteredPostedJobs = jobs.filter((job) => job.id !== id);
-    setJobs(filteredPostedJobs);
-    localStorage.setItem("postedJobs", JSON.stringify(filteredPostedJobs));
-
-    const savedInsights = JSON.parse(localStorage.getItem("jobinsights")) || [];
-    const filteredInsights = savedInsights.filter((job) => job.id !== id);
-    localStorage.setItem("jobinsights", JSON.stringify(filteredInsights));
-
-    const savedViewJobs = JSON.parse(localStorage.getItem("viewjobs")) || [];
-    const filteredViewJobs = savedViewJobs.filter((job) => job.id !== id);
-    localStorage.setItem("viewjobs", JSON.stringify(filteredViewJobs));
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`http://localhost:5000/api/jobsdb/${id}`);
+      setJobs((prev) => prev.filter((job) => job._id !== id));
+    } catch (error) {
+      console.error("Error deleting job:", error);
+    }
   };
 
   return (
@@ -50,7 +56,7 @@ function Postedjobs() {
           >
             <h2 className="card-title">No jobs posted yet</h2>
             <p className="card-subtitle">
-              Once a recruiter posts a job, it will appear here.
+              Once you post a job, it will appear here.
             </p>
           </div>
         ) : (
@@ -64,7 +70,7 @@ function Postedjobs() {
           >
             {jobs.map((job) => (
               <div
-                key={job.id}
+                key={job._id}
                 className="profile-card"
                 style={{
                   padding: "20px",
@@ -111,7 +117,7 @@ function Postedjobs() {
                   </div>
 
                   <button
-                    onClick={() => handleDelete(job.id)}
+                    onClick={() => handleDelete(job._id)}
                     style={{
                       border: "none",
                       background: "#ffe5e5",

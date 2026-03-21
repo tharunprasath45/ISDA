@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./jobinsights.css";
 import { Link } from "react-router-dom";
+import axios from "axios";
 import { renderheader, header } from "./Dashboardcontent";
 import {
   Bookmark,
@@ -17,10 +18,21 @@ function Jobinsights() {
   });
 
   const [findjobs, setFindJobs] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchJobs = async () => {
+    try {
+      const res = await axios.get("http://localhost:5000/api/jobsdb");
+      setFindJobs(res.data);
+    } catch (error) {
+      console.error("Error fetching jobs:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const savedJobs = JSON.parse(localStorage.getItem("jobinsights")) || [];
-    setFindJobs(savedJobs);
+    fetchJobs();
   }, []);
 
   return (
@@ -28,7 +40,6 @@ function Jobinsights() {
       <div>{renderheader(updateskills)}</div>
 
       <div className="jobinsights-top">
-
         <p className="jobinsights-subtext">
           Browse the latest openings and view job details in a clean, modern
           layout.
@@ -36,7 +47,11 @@ function Jobinsights() {
       </div>
 
       <div className="job-wrapper">
-        {findjobs.length === 0 ? (
+        {loading ? (
+          <div className="empty-card">
+            <h2>Loading jobs...</h2>
+          </div>
+        ) : findjobs.length === 0 ? (
           <div className="empty-card">
             <h2>No jobs posted yet</h2>
             <p>Once a recruiter posts a job, it will appear here.</p>
@@ -44,7 +59,7 @@ function Jobinsights() {
         ) : (
           <div className="job-grid">
             {findjobs.map((findjob) => (
-              <div key={findjob.id} className="job-card">
+              <div key={findjob._id} className="job-card">
                 <div className="job-card-header">
                   <div className="job-company-block">
                     <div className="job-logo-circle">
@@ -105,18 +120,17 @@ function Jobinsights() {
                 <div className="job-card-footer">
                   <p className="job-salary">
                     <IndianRupee size={18} />
-                    {findjob.minSalary || "40000"} - {findjob.maxSalary || "60000"}
+                    {findjob.minSalary || "40000"} -{" "}
+                    {findjob.maxSalary || "60000"}
                     <span> /month</span>
                   </p>
 
                   <div className="job-action-buttons">
-                    <Link to={`/ViewDetails/${findjob.id}`}>
+                    <Link to={`/ViewDetails/${findjob._id}`}>
                       <button className="job-btn view-btn" type="button">
                         View Details
                       </button>
                     </Link>
-
-                   
                   </div>
                 </div>
               </div>

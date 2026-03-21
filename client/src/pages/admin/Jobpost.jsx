@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from "axios";
 import Select from "react-select";
 import { renderheader, header } from "../../components/Dashboardcontent";
 import { ArrowRightFromLine, Save } from "lucide-react";
@@ -10,7 +11,10 @@ function Jobpost() {
     if (intro.dashboard === "Dashboard") return { dashboard: "Post a Job" };
     return intro;
   });
+
   const [activetabs, setactivetabs] = useState("jobdetails");
+  const [loading, setLoading] = useState(false);
+
   const [title, setTitle] = useState({
     details: "",
     Locations: "",
@@ -18,22 +22,26 @@ function Jobpost() {
     max_range: "",
     min_range: "",
   });
+
   const [description, setDescription] = useState({
     about: "",
     require: "",
   });
+
   const [company, setCompany] = useState({
     company_name: "",
     company_website: "",
     about_company: "",
   });
+
   const [Employment, setEmployment] = useState(null);
   const Employee = [
     { value: "full time", label: "Full time" },
     { value: "part time", label: "Part time" },
-    { value: "Contract", label: "Contract" },
+    { value: "contract", label: "Contract" },
     { value: "internship", label: "Internship" },
   ];
+
   const [EmploymentLevel, setEmploymentLevel] = useState(null);
   const Employeelevel = [
     { value: "Entry", label: "Entry" },
@@ -41,7 +49,7 @@ function Jobpost() {
     { value: "senior", label: "Senior" },
   ];
 
-  const handleSaveJob = () => {
+  const handleSaveJob = async () => {
     if (
       !title.details ||
       !title.Locations ||
@@ -50,7 +58,6 @@ function Jobpost() {
       !description.require ||
       !company.company_name
     ) {
-      // alert("Please fill all required fields before saving");
       toast.warn("Fill all required fields before saving", {
         position: "top-right",
         autoClose: 1000,
@@ -58,18 +65,34 @@ function Jobpost() {
         closeOnClick: false,
         pauseOnHover: false,
         draggable: true,
-        progress: undefined,
         theme: "dark",
       });
       return;
     }
+
+    const recruiter = JSON.parse(localStorage.getItem("admins")) || {};
+
+    if (!recruiter.email) {
+      toast.error("Recruiter details not found. Please login again.", {
+        position: "top-center",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: false,
+        draggable: true,
+        theme: "dark",
+      });
+      return;
+    }
+
     const newJob = {
-      id: Date.now(),
+      recruiterId: recruiter.id || recruiter._id || recruiter.email,
+      recruiterEmail: recruiter.email,
       jobTitle: title.details,
       location: title.Locations,
       category: title.category,
-      minSalary: title.min_range,
-      maxSalary: title.max_range,
+      minSalary: Number(title.min_range) || 0,
+      maxSalary: Number(title.max_range) || 0,
       employmentType: Employment?.label || "",
       experienceLevel: EmploymentLevel?.label || "",
       description: description.about,
@@ -79,55 +102,58 @@ function Jobpost() {
       aboutCompany: company.about_company,
       postedAt: new Date().toLocaleString(),
     };
-    const existingJobs = JSON.parse(localStorage.getItem("postedJobs")) || [];
-    const updatedJobs = [...existingJobs, newJob];
 
-    localStorage.setItem("postedJobs", JSON.stringify(updatedJobs));
-// ------------------------------------------------------------------------------------------------------------
-    const findjob = JSON.parse(localStorage.getItem("jobinsights")) || [];
-    const updatefindjobs = [...findjob, newJob];
-    
-    localStorage.setItem("jobinsights", JSON.stringify(updatefindjobs));
-// ------------------------------------------------------------------------------------------------------------
-    // const viewjob = JSON.parse(localStorage.getItem("viewjobs")) || [];
-    // const updateviewjobs = [...viewjob, newJob];
-    
-    // localStorage.setItem("viewjobs", JSON.stringify(updateviewjobs));
-// ------------------------------------------------------------------------------------------------------------
-    //alert("Job posted successfully!");
-    toast.success("Job posted successfully!", {
-      position: "top-center",
-      autoClose: 1500,
-      hideProgressBar: false,
-      closeOnClick: false,
-      pauseOnHover: false,
-      draggable: true,
-      progress: undefined,
-      theme: "dark",
-    });
+    try {
+      setLoading(true);
 
-    setTitle({
-      details: "",
-      Locations: "",
-      category: "",
-      max_range: "",
-      min_range: "",
-    });
+      await axios.post("http://localhost:5000/api/jobsdb", newJob);
 
-    setDescription({
-      about: "",
-      require: "",
-    });
+      toast.success("Job posted successfully!", {
+        position: "top-center",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: false,
+        draggable: true,
+        theme: "dark",
+      });
 
-    setCompany({
-      company_name: "",
-      company_website: "",
-      about_company: "",
-    });
+      setTitle({
+        details: "",
+        Locations: "",
+        category: "",
+        max_range: "",
+        min_range: "",
+      });
 
-    setEmployment(null);
-    setEmploymentLevel(null);
-    setactivetabs("jobdetails");
+      setDescription({
+        about: "",
+        require: "",
+      });
+
+      setCompany({
+        company_name: "",
+        company_website: "",
+        about_company: "",
+      });
+
+      setEmployment(null);
+      setEmploymentLevel(null);
+      setactivetabs("jobdetails");
+    } catch (error) {
+      console.error("Error posting job:", error);
+      toast.error(error?.response?.data?.message || "Failed to post job", {
+        position: "top-center",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: false,
+        draggable: true,
+        theme: "dark",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -159,13 +185,17 @@ function Jobpost() {
           Company
         </button>
       </div>
+
       <button
         className="explore-btn-1"
         style={{ marginLeft: "34%" }}
         onClick={handleSaveJob}
+        disabled={loading}
       >
-        <Save /> Save Changes
+        <Save />
+        {loading ? " Saving..." : " Save Changes"}
       </button>
+
       <ToastContainer />
 
       {activetabs === "jobdetails" && (
@@ -255,14 +285,15 @@ function Jobpost() {
           </div>
         </div>
       )}
+
       {activetabs === "description" && (
         <div className="profile-card">
           <h2 className="card-title">Job Description</h2>
           <p className="card-subtitle">Update your Job description</p>
+
           <div className="form-group">
             <label>Description (or) Responsibilities</label>
             <textarea
-              type="text"
               value={description.about}
               onChange={(e) =>
                 setDescription({ ...description, about: e.target.value })
@@ -273,7 +304,6 @@ function Jobpost() {
           <div className="form-group">
             <label style={{ marginTop: "20px" }}>Requirements</label>
             <textarea
-              type="text"
               value={description.require}
               onChange={(e) =>
                 setDescription({ ...description, require: e.target.value })
@@ -287,6 +317,7 @@ function Jobpost() {
         <div className="profile-card">
           <h2 className="card-title">Company Information</h2>
           <p className="card-subtitle">Update your Company Information</p>
+
           <div className="profile-grid">
             <div className="form-group">
               <label>Company Name</label>
@@ -313,7 +344,6 @@ function Jobpost() {
             <div className="form-group">
               <label>About Company</label>
               <textarea
-                type="text"
                 value={company.about_company}
                 onChange={(e) =>
                   setCompany({ ...company, about_company: e.target.value })
@@ -325,7 +355,6 @@ function Jobpost() {
       )}
 
       <p id="arrowrightline">
-        {" "}
         Continue <ArrowRightFromLine size={18} />
       </p>
     </div>

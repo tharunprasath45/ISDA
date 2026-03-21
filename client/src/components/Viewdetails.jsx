@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./Viewdetails.css";
+import axios from "axios";
 import {
   MapPin,
   Building2,
@@ -16,72 +17,136 @@ import { useNavigate, useParams } from "react-router-dom";
 function Viewdetails() {
   const navigate = useNavigate();
   const { id } = useParams();
+
   const [job, setJob] = useState(null);
+  const [pageLoading, setPageLoading] = useState(true);
+  const [openresumecart, setResumeCart] = useState(false);
+  const [resumeFile, setResumeFile] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const savedJobs = JSON.parse(localStorage.getItem("jobinsights")) || [];
-    const selectedJob = savedJobs.find(
-      (item) => String(item.id) === String(id),
-    );
-    setJob(selectedJob || null);
+    const fetchJob = async () => {
+      try {
+        setPageLoading(true);
+        const res = await axios.get(`http://localhost:5000/api/jobsdb/${id}`);
+        setJob(res.data);
+      } catch (error) {
+        console.error("Error fetching job details:", error);
+        setJob(null);
+      } finally {
+        setPageLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchJob();
+    }
   }, [id]);
 
-  const [openresumecart, setResumeCart] = useState(false);
   const handleclick = () => {
     setResumeCart(true);
   };
-  const [resumeFile, setResumeFile] = useState(null);
+
   const handleResumeChange = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      setResumeFile(file);
+    if (!file) return;
+
+    const allowedTypes = [
+      "application/pdf",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "application/msword",
+    ];
+
+    const maxSize = 5 * 1024 * 1024;
+
+    if (!allowedTypes.includes(file.type)) {
+      alert("Only PDF, DOC, and DOCX files are allowed.");
+      e.target.value = "";
+      return;
     }
+
+    if (file.size > maxSize) {
+      alert("Resume file is too large. Please upload a file smaller than 5MB.");
+      e.target.value = "";
+      return;
+    }
+
+    setResumeFile(file);
   };
-  const handleApply = () => {
+
+  const handleApply = async () => {
     if (!resumeFile) {
       alert("Please upload your resume");
       return;
     }
+
+    if (!job) {
+      alert("Job not found");
+      return;
+    }
+
     const storedUser = JSON.parse(localStorage.getItem("users")) || {};
-    const storedAdmin = JSON.parse(localStorage.getItem("admins")) || {};
+
+    const userEmail =
+      storedUser.email || storedUser.userEmail || storedUser.mail || "";
+
+    const userName =
+      storedUser.fullname ||
+      storedUser.name ||
+      storedUser.username ||
+      "Unknown User";
+
+    if (!userEmail) {
+      console.log("users from localStorage:", storedUser);
+      alert("User email not found. Please login again.");
+      return;
+    }
 
     const reader = new FileReader();
 
-    reader.onload = () => {
-      const appliedJobs = JSON.parse(localStorage.getItem("appliedJobs")) || [];
+    reader.onload = async () => {
+      try {
+        setLoading(true);
 
-      const newAppliedJob = {
-        ...job,
-        applicantName: storedUser.fullname || "Unknown User",
-        email: storedAdmin.email || "No Email",
-        resumeName: resumeFile.name,
-        resumeData: reader.result,
-        appliedAt: new Date().toLocaleString(),
-      };
+        const applicantData = {
+          userId: String(storedUser.id || storedUser._id || userEmail),
+          userEmail: String(userEmail),
 
-      appliedJobs.push(newAppliedJob);
-      localStorage.setItem("appliedJobs", JSON.stringify(appliedJobs));
+          recruiterId: String(
+            job.recruiterId || job.recruiterEmail || "No Recruiter",
+          ),
+          recruiterEmail: String(job.recruiterEmail || "No Recruiter Email"),
 
-      // ---------------- Recruiter side ----------------
-      const applicants = JSON.parse(localStorage.getItem("applicants")) || [];
+          jobId: String(job._id),
 
-      const newApplicant = {
-        applicantId: Date.now(),
-        name: storedUser.fullname || "Unknown User",
-        email: storedAdmin.email || "No Email",
-        jobId: job.id,
-        jobTitle: job.jobTitle || "Untitled Job",
-        companyName: job.companyName || "Unknown Company",
-        resumeName: resumeFile.name,
-        resumeData: reader.result,
-        appliedAt: new Date().toLocaleString(),
-      };
-      applicants.push(newApplicant);
-      localStorage.setItem("applicants", JSON.stringify(applicants));
+          name: String(userName),
+          email: String(userEmail),
+          jobTitle: String(job.jobTitle || "Untitled Job"),
+          companyName: String(job.companyName || "Unknown Company"),
+          location: String(job.location || "Unknown location"),
+          resumeName: String(resumeFile.name || ""),
+          resumeData: String(reader.result || ""),
+          appliedAt: new Date().toLocaleString(),
+          status: "Applied",
+        };
 
-      alert("Applied successfully");
-      setResumeCart(false);
-      setResumeFile(null);
+        console.log("Sending applicant data:", applicantData);
+
+        await axios.post("http://localhost:5000/api/applicants", applicantData);
+
+        alert("Applied successfully");
+        setResumeCart(false);
+        setResumeFile(null);
+      } catch (error) {
+        console.error("Error applying job:", error.response?.data || error);
+        alert(
+          error?.response?.data?.error ||
+            error?.response?.data?.message ||
+            "Failed to apply job",
+        );
+      } finally {
+        setLoading(false);
+      }
     };
 
     reader.readAsDataURL(resumeFile);
@@ -93,7 +158,12 @@ function Viewdetails() {
         <ArrowLeft size={18} /> Back
       </button>
 
-      {!job ? (
+      {pageLoading ? (
+        <div className="no-jobs-box">
+          <h2>Loading job...</h2>
+          <p>Please wait while we fetch the job details.</p>
+        </div>
+      ) : !job ? (
         <div className="no-jobs-box">
           <h2>Job not found</h2>
           <p>This job may have been removed or is no longer available.</p>
@@ -134,6 +204,7 @@ function Viewdetails() {
                 Apply Now
               </button>
             </div>
+
             {openresumecart && (
               <div className="resume-overlay">
                 <div className="resume-popup">
@@ -142,7 +213,7 @@ function Viewdetails() {
                   <label className="resume-upload-box">
                     <input
                       type="file"
-                      accept=".pdf,.docx"
+                      accept=".pdf,.doc,.docx"
                       onChange={handleResumeChange}
                       hidden
                     />
@@ -151,7 +222,7 @@ function Viewdetails() {
                       Drag your resume here or click to upload
                     </p>
                     <p className="upload-subtext">
-                      Acceptable file types: PDF, DOCX
+                      Acceptable file types: PDF, DOC, DOCX
                     </p>
                   </label>
 
@@ -168,12 +239,17 @@ function Viewdetails() {
                         setResumeCart(false);
                         setResumeFile(null);
                       }}
+                      disabled={loading}
                     >
                       Cancel
                     </button>
 
-                    <button className="resume-apply-btn" onClick={handleApply}>
-                      Apply
+                    <button
+                      className="resume-apply-btn"
+                      onClick={handleApply}
+                      disabled={loading}
+                    >
+                      {loading ? "Applying..." : "Apply"}
                     </button>
                   </div>
                 </div>

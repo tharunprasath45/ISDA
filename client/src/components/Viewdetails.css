@@ -386,7 +386,6 @@
   gap: 18px;
   color: #6b7280;
   font-size: 14px;
-  
 }
 
 .applied-job-meta span {
@@ -412,6 +411,7 @@
   padding: 6px 14px;
   border-radius: 20px;
 }
+/* Select container */
 
 /* Resume Button */
 .resume-btn {
@@ -437,4 +437,17 @@
   background: #fd919142;
 }
 
+.selected-badge {
+  color: #16a34a; /* green */
+  font-weight: 600;
+}
 
+.rejected-badge {
+  color: #dc2626; /* red */
+  font-weight: 600;
+}
+
+.applied-text {
+  color: #f59e0b; /* orange */
+  font-weight: 600;
+}

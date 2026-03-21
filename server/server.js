@@ -8,15 +8,20 @@ dotenv.config();
 
 const app = express();
 
-app.use(cors({ origin: ["http://localhost:5173", "http://localhost:3000"] }));
-app.use(express.json());
+app.use(
+  cors({
+    origin: ["http://localhost:5173", "http://localhost:3000"],
+    credentials: true,
+  })
+);
 
-// ✅ Debug: confirm which file is running + which port
+app.use(express.json({ limit: "25mb" }));
+app.use(express.urlencoded({ limit: "25mb", extended: true }));
+
 console.log("✅ RUNNING FILE:", __filename);
 console.log("✅ PORT:", process.env.PORT);
-console.log("✅ MONGO_URI:", process.env.MONGO_URI);
+console.log("✅ MONGO_URI:", process.env.MONGO_URI ? "Loaded" : "Missing");
 
-// ✅ MongoDB (use the correct env key)
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => console.log("✅ MongoDB Connected Successfully"))
@@ -26,19 +31,23 @@ app.get("/", (req, res) => {
   res.send("🚀 Server is running successfully!");
 });
 
-// ✅ IMPORTANT: this route MUST exist
+// applicants routes
+app.use("/api/applicants", require("./routes/applicantRoutes"));
+
+// jobs routes
+app.use("/api/jobsdb", require("./routes/jobRoutes"));
+
+// adzuna jobs API
 app.get("/api/jobs", async (req, res) => {
   try {
     const what = req.query.what || "data analyst";
     const page = Number(req.query.page || 1);
     const limit = Number(req.query.limit || 10);
 
-    // If you have Adzuna keys, it will fetch real jobs
     const country = process.env.ADZUNA_COUNTRY || "in";
     const app_id = process.env.ADZUNA_APP_ID;
     const app_key = process.env.ADZUNA_APP_KEY;
 
-    // ✅ If keys missing, return demo data (prevents errors)
     if (!app_id || !app_key) {
       return res.json({
         count: 1,
@@ -57,14 +66,19 @@ app.get("/api/jobs", async (req, res) => {
     const url = `https://api.adzuna.com/v1/api/jobs/${country}/search/${page}`;
 
     const response = await axios.get(url, {
-      params: { app_id, app_key, what, results_per_page: limit },
+      params: {
+        app_id,
+        app_key,
+        what,
+        results_per_page: limit,
+      },
     });
 
     const results = (response.data.results || []).map((job) => ({
       title: job.title,
-      company: job.company?.display_name,
-      location: job.location?.display_name,
-      category: job.category?.label,
+      company: job.company?.display_name || "Unknown Company",
+      location: job.location?.display_name || "Unknown Location",
+      category: job.category?.label || "General",
       created: job.created,
       description: job.description,
       redirect_url: job.redirect_url,
@@ -78,4 +92,6 @@ app.get("/api/jobs", async (req, res) => {
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`🔥 Server running on http://localhost:${PORT}`));
+app.listen(PORT, () => {
+  console.log(`🔥 Server running on http://localhost:${PORT}`);
+});
