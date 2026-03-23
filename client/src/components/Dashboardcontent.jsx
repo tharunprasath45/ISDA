@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-
 import {
   Search,
   ArrowRightFromLine,
@@ -8,6 +7,7 @@ import {
   TrendingUp,
   Download,
 } from "lucide-react";
+import axios from "axios";
 import MyChart from "./Mychart";
 
 function SkillList({ skills }) {
@@ -30,51 +30,38 @@ function Reportcard() {
   const handleDownload = () => {
     const link = document.createElement("a");
     link.href = "/Reports/success_skills_research.pdf";
-    link.download = "Skills Employers Demand .pdf";
+    link.download = "Skills Employers Demand.pdf";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
 
   return (
-    <>
-      {/* <div>
-        <h3>Q4 2025 Market Report</h3>
-        <p>PDF - 2.4 MB</p>
-      </div>
-<a 
-  href="/reports/success_skills_research.pdf" 
-  download="Q4_2025_Market_Report.pdf"
->
-  Download
-</a> */}
-
-      <p
-        style={{
-          color: "blue",
-          cursor: "pointer",
-          display: "flex",
-          alignItems: "center",
-          gap: "10px",
-        }}
-        onClick={handleDownload}
-      >
-        Download <Download size={22} />
-      </p>
-    </>
+    <p
+      style={{
+        color: "blue",
+        cursor: "pointer",
+        display: "flex",
+        alignItems: "center",
+        gap: "10px",
+      }}
+      onClick={handleDownload}
+    >
+      Download <Download size={22} />
+    </p>
   );
 }
 
-//Render method:
-
 export function renderheader(data) {
   const [searchchange, setsearchchange] = useState("");
+
   const sidecontent = {
     fontFamily: "system-ui, sans-serif",
     fontSize: "25px",
     fontWeight: "500",
     padding: "12px 24px",
   };
+
   return data.map((intro, index) => (
     <div
       style={{
@@ -91,6 +78,7 @@ export function renderheader(data) {
       <p style={sidecontent} className="dashboard">
         {intro.dashboard}
       </p>
+
       <div className="search-container">
         <input
           type="text"
@@ -106,34 +94,57 @@ export function renderheader(data) {
     </div>
   ));
 }
-export const header = [{ dashboard: "Dashboard" }];
 
-// dashboardcontent:
+export const header = [{ dashboard: "Dashboard" }];
 
 function Dashboardcontent() {
   const threeboxes = {
     width: "373.8px",
     border: "1px solid #eef2f6",
   };
- const [username, setusername] = useState("");
+
+  const [username, setusername] = useState("");
   const [activejobcount, setActivejobcount] = useState("0");
   const [monthlyhires, setMonthlyhires] = useState("0");
 
-useEffect(() => {
-  const email = localStorage.getItem("useremail");
-  if (email) {
-    const namepart = email.split("@")[0];
-    const cleanName = namepart.replace(/[0-9]/g, "");
-    const formatedname = cleanName.charAt(0).toUpperCase() + cleanName.slice(1);
-    setusername(formatedname);
-  }
+  const API_URL = import.meta.env.VITE_API_URL;
 
-  const count = localStorage.getItem("activejobcount");
-  if (count) setActivejobcount(count); 
-  
-  const hires = localStorage.getItem("monthlyhires"); 
-  if (hires) setMonthlyhires(hires);
-}, []);
+  useEffect(() => {
+    const email = localStorage.getItem("useremail");
+
+    if (email) {
+      const namepart = email.split("@")[0];
+      const cleanName = namepart.replace(/[0-9]/g, "");
+      const formatedname =
+        cleanName.charAt(0).toUpperCase() + cleanName.slice(1);
+      setusername(formatedname);
+    }
+
+    const fetchDashboardCounts = async () => {
+      try {
+        const jobsRes = await axios.get(`${API_URL}/api/jobsdb`);
+        const totalJobs = Array.isArray(jobsRes.data) ? jobsRes.data.length : 0;
+        setActivejobcount(String(totalJobs));
+        localStorage.setItem("activejobcount", String(totalJobs));
+
+        if (email) {
+          const appliedRes = await axios.get(
+            `${API_URL}/api/applicants/user/${encodeURIComponent(email)}`
+          );
+          const totalApplied = Array.isArray(appliedRes.data)
+            ? appliedRes.data.length
+            : 0;
+
+          setMonthlyhires(String(totalApplied));
+          localStorage.setItem("monthlyhires", String(totalApplied));
+        }
+      } catch (error) {
+        console.error("Error fetching dashboard counts:", error);
+      }
+    };
+
+    fetchDashboardCounts();
+  }, [API_URL]);
 
   const skillsData = [
     { name: "React", value: 94 },
@@ -142,6 +153,7 @@ useEffect(() => {
     { name: "Cybersecurity", value: 45 },
     { name: "Kubernetes", value: 34 },
   ];
+
   const categorybox = [
     {
       title: "Active Job Listings",
@@ -162,19 +174,22 @@ useEffect(() => {
       iconsbox: <Disc2 />,
     },
   ];
+
   const graphbox = [
     { title: "Job Market Trend", content: <MyChart /> },
     { title: "Trending Skills", content: <SkillList skills={skillsData} /> },
   ];
+
   const Industriesbox = [
     {
       title: "Available Reports",
       subhead: "Download detailed analysis reports",
     },
   ];
+
   const subcategory = [
     {
-      downloadname: "Skills Employers Demand ",
+      downloadname: "Skills Employers Demand",
       reportsdownload: <Reportcard />,
     },
     { downloadname: "Industry Comparison", reportsdownload: <Reportcard /> },
@@ -184,16 +199,9 @@ useEffect(() => {
     { downloadname: "Q4 2025 Market Report", reportsdownload: <Reportcard /> },
   ];
 
- 
-
-
-
   return (
     <div>
-      {/* header section */}
       <div>{renderheader(header)}</div>
-
-      {/* Welcome section */}
 
       <div
         style={{
@@ -203,7 +211,6 @@ useEffect(() => {
           padding: "17px 18px 10px 10px",
         }}
       >
-        {/* borderBottom:'1px solid black' */}
         <div style={{ padding: "17px 18px 10px 10px" }}>
           <div className="welcome-container">
             <div className="welcome-left">
@@ -222,8 +229,6 @@ useEffect(() => {
         </div>
       </div>
 
-      {/* 3-boxes section */}
-      {/* borderBottom:'1px solid black' */}
       <div
         style={{
           height: "200px",
@@ -234,36 +239,27 @@ useEffect(() => {
         }}
       >
         <div style={{ display: "flex", flexWrap: "wrap", gap: "20px" }}>
-          {/* <div style={threeboxes} id='marketing-page'></div>
-            <div style={threeboxes}></div>
-            <div style={threeboxes}></div> */}
-
           {categorybox.map((stat, index) => (
             <div key={index} style={threeboxes} id="marketing-page">
               <h3 className="stat-label">{stat.title}</h3>
               <p className="stat-value">{stat.value}</p>
               <div className="stat-footer-simple">{stat.footer}</div>
-
               <div className="stat-icon-bg">{stat.iconsbox}</div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* graph */}
       <div className="dashboard-container">
         <div className="dashboard-grid">
           {graphbox.map((graphmodel, index) => (
             <div key={index} className="marketing-page">
               <h3 className="stat-label">{graphmodel.title}</h3>
-              <div>{graphmodel.graph}</div>
               <div className="content-area">{graphmodel.content}</div>
             </div>
           ))}
         </div>
       </div>
-
-      {/* analysis reports */}
 
       <div
         style={{
@@ -289,7 +285,6 @@ useEffect(() => {
             >
               <h3 className="stat-label">{industriesmodel.title}</h3>
               <p className="subhead">{industriesmodel.subhead}</p>
-              {/* sub-box */}
 
               <div className="reports-section">
                 {subcategory.map((sub, index) => (

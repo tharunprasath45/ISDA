@@ -20,17 +20,20 @@ function Jobinsights() {
   const [findjobs, setFindJobs] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const API_URL = import.meta.env.VITE_API_URL;
+
   const fetchJobs = async () => {
-  try {
-    const res = await axios.get("http://localhost:5000/api/jobsdb");
-    setFindJobs(res.data);
-    localStorage.setItem("activejobcount", res.data.length); // ← add this
-  } catch (error) {
-    console.error("Error fetching jobs:", error);
-  } finally {
-    setLoading(false);
-  }
-};
+    try {
+      const res = await axios.get(`${API_URL}/api/jobsdb`);
+      setFindJobs(res.data);
+      localStorage.setItem("activejobcount", res.data.length);
+    } catch (error) {
+      console.error("Error fetching jobs:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchJobs();
   }, []);

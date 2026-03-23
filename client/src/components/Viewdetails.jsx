@@ -24,11 +24,13 @@ function Viewdetails() {
   const [resumeFile, setResumeFile] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  const API_URL = import.meta.env.VITE_API_URL;
+
   useEffect(() => {
     const fetchJob = async () => {
       try {
         setPageLoading(true);
-        const res = await axios.get(`http://localhost:5000/api/jobsdb/${id}`);
+        const res = await axios.get(`${API_URL}/api/jobsdb/${id}`);
         setJob(res.data);
       } catch (error) {
         console.error("Error fetching job details:", error);
@@ -41,7 +43,7 @@ function Viewdetails() {
     if (id) {
       fetchJob();
     }
-  }, [id]);
+  }, [id, API_URL]);
 
   const handleclick = () => {
     setResumeCart(true);
@@ -113,7 +115,7 @@ function Viewdetails() {
           userEmail: String(userEmail),
 
           recruiterId: String(
-            job.recruiterId || job.recruiterEmail || "No Recruiter",
+            job.recruiterId || job.recruiterEmail || "No Recruiter"
           ),
           recruiterEmail: String(job.recruiterEmail || "No Recruiter Email"),
 
@@ -132,7 +134,7 @@ function Viewdetails() {
 
         console.log("Sending applicant data:", applicantData);
 
-        await axios.post("http://localhost:5000/api/applicants", applicantData);
+        await axios.post(`${API_URL}/api/applicants`, applicantData);
 
         alert("Applied successfully");
         setResumeCart(false);
@@ -142,7 +144,7 @@ function Viewdetails() {
         alert(
           error?.response?.data?.error ||
             error?.response?.data?.message ||
-            "Failed to apply job",
+            "Failed to apply job"
         );
       } finally {
         setLoading(false);

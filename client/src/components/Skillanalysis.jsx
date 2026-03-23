@@ -9,12 +9,14 @@ function Skillanalysis() {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [hasSearched, setHasSearched] = useState(false); // ✅ track if user has searched
+  const [hasSearched, setHasSearched] = useState(false);
 
   const updateskills = header.map((intro) => {
     if (intro.dashboard === "Dashboard") return { dashboard: "Skill Analysis" };
     return intro;
   });
+
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const handleSearch = async () => {
     if (!searchanalysis.trim()) return;
@@ -26,7 +28,7 @@ function Skillanalysis() {
 
     try {
       const res = await fetch(
-        `http://localhost:5000/api/jobs?what=${encodeURIComponent(
+        `${API_URL}/api/jobs?what=${encodeURIComponent(
           searchanalysis
         )}&page=1&limit=10`
       );
@@ -43,12 +45,10 @@ function Skillanalysis() {
     }
   };
 
-  // ✅ When user changes input
   const handleInputChange = (e) => {
     const value = e.target.value;
     setsearchanalysis(value);
 
-    // If user clears input => reset view to image
     if (!value.trim()) {
       setJobs([]);
       setError("");
@@ -57,15 +57,10 @@ function Skillanalysis() {
     }
   };
 
-  // ✅ For Enter key
   const handleKeyDown = (e) => {
     if (e.key === "Enter") handleSearch();
   };
 
-  // ✅ Decide what to show:
-  // - If not searched yet => show image
-  // - If searched and results exist => show results
-  // - If searched and results empty => show "No results" box
   const showEmptyImage = !hasSearched;
   const showNoResults = hasSearched && !loading && !error && jobs.length === 0;
 
@@ -73,7 +68,6 @@ function Skillanalysis() {
     <div style={{ background: "#ffffff", minHeight: "100vh" }}>
       <div>{renderheader(updateskills)}</div>
 
-      {/* Search Section */}
       <div style={{ padding: "25px", backgroundColor: "#ffffff" }}>
         <div
           style={{
@@ -120,9 +114,7 @@ function Skillanalysis() {
         </div>
       </div>
 
-      {/* Content Section */}
       <div style={{ padding: "30px" }}>
-        {/* ✅ 1) Default Image */}
         {showEmptyImage && (
           <div
             style={{
@@ -142,16 +134,29 @@ function Skillanalysis() {
               alt="Search illustration"
               style={{ width: "320px", maxWidth: "90%" }}
             />
-            <h3 style={{ margin: 0, fontFamily: "Inter", color: "#111827",fontWeight:'600' }}>
+            <h3
+              style={{
+                margin: 0,
+                fontFamily: "Inter",
+                color: "#111827",
+                fontWeight: "600",
+              }}
+            >
               Start searching to view job results
             </h3>
-            <p style={{ margin: 0, fontFamily: "Inter", color: "#6b7280",fontWeight:'400' }}>
+            <p
+              style={{
+                margin: 0,
+                fontFamily: "Inter",
+                color: "#6b7280",
+                fontWeight: "400",
+              }}
+            >
               Example: <b>data analyst</b>, <b>python developer</b>
             </p>
           </div>
         )}
 
-        {/* ✅ 2) No Results Box */}
         {showNoResults && (
           <div
             style={{
@@ -167,7 +172,6 @@ function Skillanalysis() {
           </div>
         )}
 
-        {/* ✅ 3) Jobs Results */}
         {jobs.map((job, i) => (
           <div
             key={i}

@@ -14,17 +14,19 @@ function Recommendations() {
   const user = JSON.parse(localStorage.getItem("users")) || {};
   const userEmail = user.email;
 
-const fetchAppliedJobs = async () => {
-  try {
-    const res = await axios.get(
-      `http://localhost:5000/api/applicants/user/${encodeURIComponent(userEmail)}`
-    );
-    setAppliedJob(res.data);
-    localStorage.setItem("monthlyhires", res.data.length); // ← add this
-  } catch (error) {
-    console.error("Error fetching applied jobs:", error);
-  }
-};
+  const API_URL = import.meta.env.VITE_API_URL;
+
+  const fetchAppliedJobs = async () => {
+    try {
+      const res = await axios.get(
+        `${API_URL}/api/applicants/user/${encodeURIComponent(userEmail)}`
+      );
+      setAppliedJob(res.data);
+      localStorage.setItem("monthlyhires", res.data.length);
+    } catch (error) {
+      console.error("Error fetching applied jobs:", error);
+    }
+  };
 
   useEffect(() => {
     if (userEmail) {
@@ -34,7 +36,7 @@ const fetchAppliedJobs = async () => {
 
   const handleDelete = async (jobId) => {
     try {
-      await axios.delete(`http://localhost:5000/api/applicants/${jobId}`);
+      await axios.delete(`${API_URL}/api/applicants/${jobId}`);
       setAppliedJob((prev) => prev.filter((job) => job._id !== jobId));
     } catch (error) {
       console.error("Error deleting applied job:", error);
@@ -79,8 +81,8 @@ const fetchAppliedJobs = async () => {
                         job.status === "Selected"
                           ? "green"
                           : job.status === "Rejected"
-                            ? "red"
-                            : "orange"
+                          ? "red"
+                          : "orange"
                       }
                     />
                     {job.status}

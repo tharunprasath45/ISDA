@@ -38,6 +38,8 @@ function Dashboardsector() {
     localStorage.removeItem("users");
     localStorage.removeItem("admins");
     localStorage.removeItem("useremail");
+    localStorage.removeItem("activejobcount");
+    localStorage.removeItem("monthlyhires");
 
     toast.success("Logout successful!", {
       position: "top-right",
@@ -77,8 +79,10 @@ function Dashboardsector() {
 
         if (sessionRole === "recruiter") {
           setUserRole("recruiter");
+          setActiveIndex(0);
         } else if (sessionRole === "jobseeker") {
           setUserRole("jobseeker");
+          setActiveIndex(0);
         } else {
           navigate("/login");
         }
