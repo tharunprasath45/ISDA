@@ -1,17 +1,24 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./Recruiter.css";
 import { renderheader, header } from "../../components/Dashboardcontent";
 import { CircleArrowOutUpRight } from "lucide-react";
+import axios from "axios";
 
 function RecuiterDashboard() {
-  const updateskills = header.map((intro) => {
-    if (intro.dashboard === "Dashboard") return { dashboard: "Dashboard" };
-  });
+  const updateskills = header
+    .map((intro) => {
+      if (intro.dashboard === "Dashboard") {
+        return { dashboard: "Dashboard" };
+      }
+      return null;
+    })
+    .filter(Boolean);
 
   const threeboxes = {
     width: "373.8px",
     border: "1px solid #eef2f6",
   };
+
   const [clickbox, setClickbox] = useState(null);
 
   const [stats, setStats] = useState([
@@ -38,16 +45,63 @@ function RecuiterDashboard() {
     },
   ]);
 
+  useEffect(() => {
+    const recruiter = JSON.parse(localStorage.getItem("admins")) || {};
+    const recruiterEmail = recruiter.email;
+
+    if (!recruiterEmail) return;
+
+    const API_URL = import.meta.env.VITE_API_URL;
+
+    const fetchCounts = async () => {
+      try {
+        const jobsRes = await axios.get(
+          `${API_URL}/api/jobsdb/recruiter/${encodeURIComponent(recruiterEmail)}`
+        );
+        const totalPosted = jobsRes.data.length;
+
+        const applicantsRes = await axios.get(
+          `${API_URL}/api/applicants/recruiter/${encodeURIComponent(
+            recruiterEmail
+          )}`
+        );
+        const totalApplicants = applicantsRes.data.length;
+
+        const totalHired = applicantsRes.data.filter(
+          (a) => a.status === "Selected"
+        ).length;
+
+        setStats((prev) =>
+          prev.map((stat) => {
+            if (stat.title === "Job Posted") {
+              return { ...stat, value: totalPosted };
+            }
+            if (stat.title === "Total Applicants") {
+              return { ...stat, value: totalApplicants };
+            }
+            if (stat.title === "Total Hired") {
+              return { ...stat, value: totalHired };
+            }
+            return stat;
+          })
+        );
+      } catch (error) {
+        console.error("Error fetching counts:", error);
+      }
+    };
+
+    fetchCounts();
+  }, []);
+
   return (
     <>
-      {" "}
       <div>
         {renderheader(updateskills)}
         <p className="overview">
           Overview of your job postings and applicants.
         </p>
       </div>
-      {/*  */}
+
       <div
         style={{
           height: "200px",
@@ -71,19 +125,12 @@ function RecuiterDashboard() {
               id="marketing-page"
             >
               <h3 className="stat-label">{stat.title}</h3>
-              <p
-                className="stat-value"
-                value={stats}
-                onChange={(e) => setStats(e.target.value)}
-              >
-                {stat.value}
-              </p>
+              <p className="stat-value">{stat.value}</p>
               <div className="stat-footer-simple">{stat.footer}</div>
               <div
                 className="stat-icon-bg"
                 onMouseEnter={() => setClickbox(index)}
                 onMouseLeave={() => setClickbox(null)}
-                //  style={{color: stat.color}}
               >
                 {stat.iconsbox}
               </div>

@@ -115,6 +115,25 @@ function Dashboardcontent() {
     width: "373.8px",
     border: "1px solid #eef2f6",
   };
+ const [username, setusername] = useState("");
+  const [activejobcount, setActivejobcount] = useState("0");
+  const [monthlyhires, setMonthlyhires] = useState("0");
+
+useEffect(() => {
+  const email = localStorage.getItem("useremail");
+  if (email) {
+    const namepart = email.split("@")[0];
+    const cleanName = namepart.replace(/[0-9]/g, "");
+    const formatedname = cleanName.charAt(0).toUpperCase() + cleanName.slice(1);
+    setusername(formatedname);
+  }
+
+  const count = localStorage.getItem("activejobcount");
+  if (count) setActivejobcount(count); 
+  
+  const hires = localStorage.getItem("monthlyhires"); 
+  if (hires) setMonthlyhires(hires);
+}, []);
 
   const skillsData = [
     { name: "React", value: 94 },
@@ -126,13 +145,13 @@ function Dashboardcontent() {
   const categorybox = [
     {
       title: "Active Job Listings",
-      value: "0",
+      value: activejobcount,
       footer: "High demand in Remote roles",
       iconsbox: <Briefcase />,
     },
     {
-      title: "Monthly Hires",
-      value: "0",
+      title: "Applied Jobs",
+      value: monthlyhires,
       footer: "Fastest growing: Tech & Design",
       iconsbox: <TrendingUp />,
     },
@@ -165,18 +184,9 @@ function Dashboardcontent() {
     { downloadname: "Q4 2025 Market Report", reportsdownload: <Reportcard /> },
   ];
 
-  const [username, setusername] = useState("");
+ 
 
-  useEffect(() => {
-    const email = localStorage.getItem("useremail");
-    if (email) {
-      const namepart = email.split("@")[0];
-      const cleanName = namepart.replace(/[0-9]/g, "");
-      const formatedname =
-        cleanName.charAt(0).toUpperCase() + cleanName.slice(1);
-      setusername(formatedname);
-    }
-  }, []);
+
 
   return (
     <div>

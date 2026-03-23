@@ -21,16 +21,17 @@ function Applicants() {
   const recruiter = JSON.parse(localStorage.getItem("admins")) || {};
   const recruiterEmail = recruiter.email;
 
-  const fetchApplicants = async () => {
-    try {
-      const res = await axios.get(
-        `http://localhost:5000/api/applicants/recruiter/${encodeURIComponent(recruiterEmail)}`,
-      );
-      setApplicants(res.data);
-    } catch (error) {
-      console.error("Error fetching applicants:", error);
-    }
-  };
+const fetchApplicants = async () => {
+  try {
+    const res = await axios.get(
+      `http://localhost:5000/api/applicants/recruiter/${encodeURIComponent(recruiterEmail)}`
+    );
+    setApplicants(res.data);
+    localStorage.setItem("totalapplicants", res.data.length); // ← add this
+  } catch (error) {
+    console.error("Error fetching applicants:", error);
+  }
+};
 
   useEffect(() => {
     if (recruiterEmail) {
@@ -59,17 +60,18 @@ function Applicants() {
     }
   };
 
-  const handleDelete = async (applicantId) => {
-    try {
-      await axios.delete(`http://localhost:5000/api/applicants/${applicantId}`);
-      setApplicants((prev) =>
-        prev.filter((applicant) => applicant._id !== applicantId),
-      );
-    } catch (error) {
-      console.error("Error deleting applicant:", error);
-    }
-  };
-
+const handleDelete = async (applicantId) => {
+  try {
+    await axios.delete(`http://localhost:5000/api/applicants/${applicantId}`);
+    setApplicants((prev) => {
+      const updated = prev.filter((applicant) => applicant._id !== applicantId);
+      localStorage.setItem("totalapplicants", updated.length); // ← add this
+      return updated;
+    });
+  } catch (error) {
+    console.error("Error deleting applicant:", error);
+  }
+};
   return (
     <div>
       {renderheader(updateskills)}

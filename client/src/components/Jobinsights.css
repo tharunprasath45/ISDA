@@ -1,5 +1,5 @@
 body {
-  font-family: Inter, sans-serif;
+  font-family: Quicksand;
   margin: 0;
   background: #ffffff;
 }
@@ -93,7 +93,7 @@ body {
   width: 52px;
   height: 52px;
   border-radius: 16px;
-  background: linear-gradient(135deg, #e0e7ff, #eef2ff);
+ background: linear-gradient(to right, #161515, #939393);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -103,7 +103,7 @@ body {
 .job-logo-circle span {
   font-size: 18px;
   font-weight: 700;
-  color: #3730a3;
+  color: #ffffff;
 }
 
 .job-company-info {
@@ -242,14 +242,15 @@ body {
   align-items: center;
   gap: 8px;
   font-size: 14px;
+ 
 }
 
 .view-btn {
-  background: #0ea5e9;
+   background: linear-gradient(to right, #161515, #939393);
 }
 
 .view-btn:hover {
-  background: #0284c7;
+  background: rgb(29, 29, 29);
 }
 
 .delete-btn {

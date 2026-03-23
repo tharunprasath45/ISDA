@@ -22,6 +22,7 @@ function Postedjobs() {
         )}`,
       );
       setJobs(res.data);
+      localStorage.setItem("totalposted", res.data.length);
     } catch (error) {
       console.error("Error fetching posted jobs:", error);
     }

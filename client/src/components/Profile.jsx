@@ -10,7 +10,25 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 function Profile() {
+  const PROFILE_STORAGE_KEY = "currentProfile";
+
   const [city, setcity] = useState(null);
+  const [Experience, setExperience] = useState(null);
+  const [activetabs, setactivetabs] = useState("profile");
+  const [task, settask] = useState(null);
+  const [todos, settoDos] = useState([]);
+  const [profileImage, setProfileImage] = useState(null);
+
+  const [userInfo, setuserInfo] = useState({
+    id: "",
+    fullname: "",
+    email: "",
+    role: "",
+    createdAt: "",
+  });
+
+  const fileInputRef = useRef(null);
+  const navigate = useNavigate();
 
   const Country = [
     { value: "India", label: "India" },
@@ -18,7 +36,7 @@ function Profile() {
     { value: "Canada", label: "Canada" },
     { value: "Germany", label: "Germany" },
   ];
-  const [Experience, setExperience] = useState(null);
+
   const Experiecing = [
     { value: "0-1", label: "0-1 year" },
     { value: "1-3", label: "1-3 years" },
@@ -27,122 +45,6 @@ function Profile() {
     { value: "8-10", label: "8-10 years" },
     { value: "10+", label: "10+ years" },
   ];
-  const [userInfo, setuserInfo] = useState({
-    fullname: "",
-    role: "",
-  });
-  useEffect(() => {
-    const storedUser = localStorage.getItem("users");
-    if (storedUser) {
-      setuserInfo(JSON.parse(storedUser));
-    }
-  }, []);
-
-  const [adminInfo, setadminInfo] = useState({
-    email: "",
-    createdAt: "",
-  });
-  useEffect(() => {
-    const storedAdmin = localStorage.getItem("admins");
-    if (storedAdmin) {
-      setadminInfo(JSON.parse(storedAdmin));
-    }
-  }, []);
-
-  //-------------------updated header-------------------
-
-  const updateskills = header.map((intro) => {
-    if (intro.dashboard === "Dashboard") return { dashboard: "Profile" };
-    return intro;
-  });
-  //-------------------------------------------------------
-
-  const [activetabs, setactivetabs] = useState("profile");
-
-  //-----------------adding skills--------------------------------
-
-  const [task, settask] = useState(null);
-  const [todos, settoDos] = useState([]);
-
-  const addSkills = () => {
-    if (task) {
-      const alreadyAdded = todos.some((t) => t.value === task.value);
-      if (alreadyAdded) return;
-      settoDos([...todos, task]);
-      settask(null);
-    } else {
-      console.log("No skill selected");
-    }
-  };
-  const navigate = useNavigate();
-  const deleteTask = (index) => {
-    const newTodos = [...todos];
-    newTodos.splice(index, 1);
-    settoDos(newTodos);
-  };
-  //---------------------------------------------------------------
-
-  //--------------------saving---------------------------
-
-  useEffect(() => {
-    if (!adminInfo.email) return;
-
-    const key = `profile_${adminInfo.email}`;
-    const saved = localStorage.getItem(key);
-
-    if (saved) {
-      const data = JSON.parse(saved);
-      setuserInfo(data.userInfo || userInfo);
-      setadminInfo(data.adminInfo || adminInfo);
-      setcity(data.city || null);
-      setExperience(data.Experience || null);
-      setProfileImage(data.profileImage || null);
-      settoDos(data.todos || []);
-    }
-  }, [adminInfo.email]);
-
-  //  SAVE CHANGES (YOUR EXACT VERSION)
-  const saveChanges = () => {
-    const key = `profile_${adminInfo.email}`;
-    const data = { userInfo, adminInfo, city, Experience, todos, profileImage };
-    localStorage.setItem(key, JSON.stringify(data));
-    // alert("Your data will be saved!");
-    toast.success("Your data will be saved!", {
-      position: "top-center",
-      autoClose: 1500,
-      hideProgressBar: false,
-      closeOnClick: false,
-      pauseOnHover: false,
-      draggable: true,
-      progress: undefined,
-      theme: "dark",
-    });
-  };
-  //----------------------------------------------------------
-
-  //------------------delete account--------------------------
-
-  const deleteAccount = async () => {
-    const ok = window.confirm(
-      "This will clear your app data and log you out. Continue?",
-    );
-    if (!ok) return;
-
-    // logout
-    const { error } = await supabase.auth.signOut();
-    if (error) return alert(error.message);
-
-    // clear your saved app data
-    localStorage.clear();
-    // OR remove only your keys:
-    // localStorage.removeItem("users");
-    // localStorage.removeItem("admins");
-    // localStorage.removeItem("skills");
-    // localStorage.removeItem("dashboard");
-
-    navigate("/Sign");
-  };
-  //-----------------------------------------------------------
 
   const SkillsWanted = [
     { value: "react", label: "React" },
@@ -154,9 +56,155 @@ function Profile() {
     { value: "mongodb", label: "MongoDB" },
     { value: "java", label: "Java" },
   ];
-  // ----------------------profile avatar-----------------------------------------------
-  const [profileImage, setProfileImage] = useState(null);
-  const fileInputRef = useRef(null);
+
+  const updateskills = header.map((intro) => {
+    if (intro.dashboard === "Dashboard") return { dashboard: "Profile" };
+    return intro;
+  });
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("users");
+    const storedAdmin = localStorage.getItem("admins");
+    const savedProfile = localStorage.getItem(PROFILE_STORAGE_KEY);
+
+    if (storedUser) {
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        setuserInfo({
+          id: parsedUser.id || "",
+          fullname: parsedUser.fullname || "",
+          email: parsedUser.email || "",
+          role: parsedUser.role || "",
+          createdAt: parsedUser.createdAt || "",
+        });
+      } catch (error) {
+        console.error("Error parsing users:", error);
+      }
+    } else if (storedAdmin) {
+      try {
+        const parsedAdmin = JSON.parse(storedAdmin);
+        setuserInfo({
+          id: parsedAdmin.id || "",
+          fullname: parsedAdmin.fullname || "",
+          email: parsedAdmin.email || "",
+          role: parsedAdmin.role || "",
+          createdAt: parsedAdmin.createdAt || "",
+        });
+      } catch (error) {
+        console.error("Error parsing admins:", error);
+      }
+    }
+
+    if (savedProfile) {
+      try {
+        const data = JSON.parse(savedProfile);
+
+        setuserInfo(
+          data.userInfo || {
+            id: "",
+            fullname: "",
+            email: "",
+            role: "",
+            createdAt: "",
+          }
+        );
+        setcity(data.city || null);
+        setExperience(data.Experience || null);
+        setProfileImage(data.profileImage || null);
+        settoDos(data.todos || []);
+      } catch (error) {
+        console.error("Error parsing saved profile:", error);
+      }
+    }
+  }, []);
+
+  const addSkills = () => {
+    if (task) {
+      const alreadyAdded = todos.some((t) => t.value === task.value);
+      if (alreadyAdded) return;
+      settoDos([...todos, task]);
+      settask(null);
+    }
+  };
+
+  const deleteTask = (index) => {
+    const newTodos = [...todos];
+    newTodos.splice(index, 1);
+    settoDos(newTodos);
+  };
+
+  const saveChanges = () => {
+    if (!userInfo.fullname?.trim()) {
+      toast.error("Please enter your full name", {
+        position: "top-center",
+        autoClose: 1500,
+        theme: "dark",
+      });
+      return;
+    }
+
+    if (!userInfo.email?.trim()) {
+      toast.error("Please enter your email", {
+        position: "top-center",
+        autoClose: 1500,
+        theme: "dark",
+      });
+      return;
+    }
+
+    const updatedUser = {
+      ...userInfo,
+    };
+
+    const data = {
+      userInfo: updatedUser,
+      city,
+      Experience,
+      todos,
+      profileImage,
+    };
+
+    localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(data));
+
+    if (updatedUser.role === "jobseeker") {
+      localStorage.setItem("users", JSON.stringify(updatedUser));
+      localStorage.removeItem("admins");
+    } else if (updatedUser.role === "recruiter") {
+      localStorage.setItem("admins", JSON.stringify(updatedUser));
+      localStorage.removeItem("users");
+    } else {
+      localStorage.setItem("users", JSON.stringify(updatedUser));
+    }
+
+    localStorage.setItem("useremail", updatedUser.email);
+
+    toast.success("Your data has been saved!", {
+      position: "top-center",
+      autoClose: 1500,
+      hideProgressBar: false,
+      closeOnClick: false,
+      pauseOnHover: false,
+      draggable: true,
+      theme: "dark",
+    });
+  };
+
+  const deleteAccount = async () => {
+    const ok = window.confirm(
+      "This will clear your app data and log you out. Continue?"
+    );
+    if (!ok) return;
+
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      alert(error.message);
+      return;
+    }
+
+    localStorage.clear();
+    navigate("/Sign");
+  };
+
   const handleAvatarClick = () => {
     fileInputRef.current.click();
   };
@@ -171,11 +219,11 @@ function Profile() {
       reader.readAsDataURL(file);
     }
   };
-  // ----------------------------------------------------------------------------------
 
   return (
     <div className="total-width-1">
       <div>{renderheader(updateskills)}</div>
+
       <div className="profile-container">
         <div className="profile-text">
           <p className="profile-head">
@@ -188,8 +236,9 @@ function Profile() {
           <Save /> Save Changes
         </button>
       </div>
+
       <ToastContainer />
-      {/* sub-active-btns */}
+
       <div className="tabs-container">
         <button
           className={`tab-btn ${activetabs === "profile" ? "active" : ""}`}
@@ -214,21 +263,19 @@ function Profile() {
           Preferences
         </button>
       </div>
-      {/* personal information */}
+
       {activetabs === "profile" && (
         <>
           <div className="profile-card">
             <h2 className="card-title">Personal Information</h2>
             <p className="card-subtitle">Update your profile details</p>
 
-            {/* Profile Header Row */}
             <div className="profile-top">
-              {/* -----------------------profile-avatar--------------------------------------------- */}
               <div className="profile-avatar" onClick={handleAvatarClick}>
                 {profileImage ? (
                   <img
                     src={profileImage}
-                    alt=""
+                    alt="Profile"
                     className="avatar-img"
                     onError={() => setProfileImage(null)}
                   />
@@ -247,15 +294,13 @@ function Profile() {
                 onChange={handleImageChange}
               />
 
-              {/* --------------------------------------------------------------------------------------- */}
               <div>
                 <h3 className="profile-name">{userInfo.fullname}</h3>
-                <p className="profile-email">{adminInfo.email}</p>
+                <p className="profile-email">{userInfo.email}</p>
                 <span className="profile-badge">{userInfo.role}</span>
               </div>
             </div>
 
-            {/* Form Grid */}
             <div className="profile-grid">
               <div className="form-group">
                 <label>Full Name</label>
@@ -272,9 +317,9 @@ function Profile() {
                 <label>Email</label>
                 <input
                   type="email"
-                  value={adminInfo.email}
+                  value={userInfo.email}
                   onChange={(e) =>
-                    setadminInfo({ ...adminInfo, email: e.target.value })
+                    setuserInfo({ ...userInfo, email: e.target.value })
                   }
                 />
               </div>
@@ -302,7 +347,7 @@ function Profile() {
               </div>
             </div>
           </div>
-          {/* account information */}
+
           <div className="profile-card">
             <p className="card-title" id="card">
               <Shield />
@@ -324,20 +369,22 @@ function Profile() {
               >
                 <Calendars color="black" size={22} />
                 Joined on{" "}
-                {adminInfo.createdAt &&
-                  new Date(adminInfo.createdAt).toLocaleDateString()}
+                {userInfo.createdAt
+                  ? new Date(userInfo.createdAt).toLocaleDateString()
+                  : "N/A"}
               </p>
             </div>
           </div>
         </>
       )}
-      {/* skills interest */}
+
       {userInfo.role === "jobseeker" && activetabs === "skills" && (
         <div className="profile-card">
           <h2 className="card-title">Your Skills</h2>
           <p className="card-subtitle">
             Add skills to get personalized recommendations
           </p>
+
           <div className="form-group">
             <Select
               className="select-region"
@@ -346,9 +393,11 @@ function Profile() {
               onChange={settask}
               placeholder="Select a skill to add"
             />
+
             <button onClick={addSkills} className="add-skill-btn">
               <Plus size={18} /> Add
             </button>
+
             <ul className="skills-list">
               {todos.map((todo, index) => (
                 <li key={index} className="skill-item">
@@ -367,12 +416,12 @@ function Profile() {
         </div>
       )}
 
-      {/* preferences */}
       {activetabs === "Preferences" && (
         <div className="profile-card" style={{ border: "2px red solid" }}>
           <h2 className="card-title" style={{ color: "red" }}>
             Danger Zone
           </h2>
+
           <div className="information" style={{ background: "#bdbcbc4e" }}>
             <p className="profile-name" id="account-time-text">
               Delete Account

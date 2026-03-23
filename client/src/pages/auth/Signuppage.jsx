@@ -62,10 +62,6 @@ function Signuppage() {
       return;
     }
 
-    localStorage.removeItem("users");
-    localStorage.removeItem("admins");
-    localStorage.removeItem("useremail");
-
     const savedUser = {
       id: data?.user?.id || "",
       fullname: signuppage.fullname,
@@ -74,15 +70,20 @@ function Signuppage() {
       createdAt: new Date().toISOString(),
     };
 
+    localStorage.removeItem("users");
+    localStorage.removeItem("admins");
+    localStorage.removeItem("currentProfile");
+    localStorage.removeItem("useremail");
+
     if (userclients.value === "jobseeker") {
       localStorage.setItem("users", JSON.stringify(savedUser));
     } else if (userclients.value === "recruiter") {
       localStorage.setItem("admins", JSON.stringify(savedUser));
+    } else {
+      localStorage.setItem("users", JSON.stringify(savedUser));
     }
 
     localStorage.setItem("useremail", signuppage.email);
-
-    console.log("Signup success:", data);
 
     toast.success("Account created successfully!", {
       position: "bottom-left",
@@ -95,13 +96,7 @@ function Signuppage() {
     });
 
     setTimeout(() => {
-      if (userclients.value === "jobseeker") {
-        navigate("/Dashboard");
-      } else if (userclients.value === "recruiter") {
-        navigate("/Dashboard");
-      } else {
-        navigate("/login");
-      }
+      navigate("/Dashboard");
     }, 1500);
   };
 
@@ -116,9 +111,9 @@ function Signuppage() {
           <div className="left-content-1">
             <div className="brand-1">
               <div className="brand-icon-1">
-                <img src={icon} style={{ height: "70px" }} />
+                <img src={icon} alt="icon" style={{ height: "70px" }} />
               </div>
-              <img src={carrerforge} style={{ height: "40px" }} />
+              <img src={carrerforge} alt="careerforge" style={{ height: "40px" }} />
             </div>
 
             <h1>

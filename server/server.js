@@ -8,19 +8,27 @@ dotenv.config();
 
 const app = express();
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:3000",
+  "https://isda-sigma.vercel.app",
+];
+
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://localhost:3000"],
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   })
 );
 
 app.use(express.json({ limit: "25mb" }));
 app.use(express.urlencoded({ limit: "25mb", extended: true }));
-
-console.log("✅ RUNNING FILE:", __filename);
-console.log("✅ PORT:", process.env.PORT);
-console.log("✅ MONGO_URI:", process.env.MONGO_URI ? "Loaded" : "Missing");
 
 mongoose
   .connect(process.env.MONGO_URI)
@@ -31,13 +39,9 @@ app.get("/", (req, res) => {
   res.send("🚀 Server is running successfully!");
 });
 
-// applicants routes
 app.use("/api/applicants", require("./routes/applicantRoutes"));
-
-// jobs routes
 app.use("/api/jobsdb", require("./routes/jobRoutes"));
 
-// adzuna jobs API
 app.get("/api/jobs", async (req, res) => {
   try {
     const what = req.query.what || "data analyst";
@@ -93,5 +97,5 @@ app.get("/api/jobs", async (req, res) => {
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`🔥 Server running on http://localhost:${PORT}`);
+  console.log(`🔥 Server running on port ${PORT}`);
 });

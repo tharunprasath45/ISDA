@@ -46,40 +46,30 @@ function Loginpage({ Welcome, Carrer, Access, Sign, Dont }) {
     const role = user?.user_metadata?.role || "";
     const email = user?.email || logindata.email || "";
     const id = user?.id || "";
+    const createdAt = new Date().toISOString();
+
+    const loggedInUser = {
+      id,
+      fullname,
+      email,
+      role,
+      createdAt,
+    };
 
     localStorage.removeItem("users");
     localStorage.removeItem("admins");
+    localStorage.removeItem("currentProfile");
     localStorage.removeItem("useremail");
 
     if (role === "jobseeker") {
-      localStorage.setItem(
-        "users",
-        JSON.stringify({
-          id,
-          fullname,
-          email,
-          role,
-          createdAt: new Date().toISOString(),
-        }),
-      );
+      localStorage.setItem("users", JSON.stringify(loggedInUser));
     } else if (role === "recruiter") {
-      localStorage.setItem(
-        "admins",
-        JSON.stringify({
-          id,
-          fullname,
-          email,
-          role,
-          createdAt: new Date().toISOString(),
-        }),
-      );
+      localStorage.setItem("admins", JSON.stringify(loggedInUser));
+    } else {
+      localStorage.setItem("users", JSON.stringify(loggedInUser));
     }
 
     localStorage.setItem("useremail", email);
-
-    console.log("Logged success:", data);
-    console.log("user metadata:", user?.user_metadata);
-    console.log("role:", role);
 
     toast.success("Login successful!", {
       position: "bottom-left",
@@ -92,13 +82,7 @@ function Loginpage({ Welcome, Carrer, Access, Sign, Dont }) {
     });
 
     setTimeout(() => {
-      if (role === "jobseeker") {
-        navigate("/Dashboard");
-      } else if (role === "recruiter") {
-        navigate("/Dashboard");
-      } else {
-        navigate("/login");
-      }
+      navigate("/Dashboard");
     }, 1500);
   };
 
@@ -112,9 +96,9 @@ function Loginpage({ Welcome, Carrer, Access, Sign, Dont }) {
         <div className="left-content">
           <div className="brand">
             <div className="brand-icon">
-              <img src={icon} style={{ height: "70px" }} />
+              <img src={icon} alt="icon" style={{ height: "70px" }} />
             </div>
-            <img src={carrerforge} style={{ height: "40px" }} />
+            <img src={carrerforge} alt="careerforge" style={{ height: "40px" }} />
           </div>
 
           <h1>

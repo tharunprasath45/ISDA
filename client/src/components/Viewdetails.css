@@ -437,17 +437,14 @@
   background: #fd919142;
 }
 
-.selected-badge {
+.selected-text {
   color: #16a34a; /* green */
   font-weight: 600;
 }
 
-.rejected-badge {
+.rejected-text {
   color: #dc2626; /* red */
   font-weight: 600;
 }
 
-.applied-text {
-  color: #f59e0b; /* orange */
-  font-weight: 600;
-}
+

@@ -14,16 +14,17 @@ function Recommendations() {
   const user = JSON.parse(localStorage.getItem("users")) || {};
   const userEmail = user.email;
 
-  const fetchAppliedJobs = async () => {
-    try {
-      const res = await axios.get(
-        `http://localhost:5000/api/applicants/user/${encodeURIComponent(userEmail)}`,
-      );
-      setAppliedJob(res.data);
-    } catch (error) {
-      console.error("Error fetching applied jobs:", error);
-    }
-  };
+const fetchAppliedJobs = async () => {
+  try {
+    const res = await axios.get(
+      `http://localhost:5000/api/applicants/user/${encodeURIComponent(userEmail)}`
+    );
+    setAppliedJob(res.data);
+    localStorage.setItem("monthlyhires", res.data.length); // ← add this
+  } catch (error) {
+    console.error("Error fetching applied jobs:", error);
+  }
+};
 
   useEffect(() => {
     if (userEmail) {
