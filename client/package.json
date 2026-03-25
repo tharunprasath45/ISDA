@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.96.0",
-      "@vitejs/plugin-react": "^5.1.1",
+      
     "axios": "^1.13.6",
     "chart.js": "^4.5.1",
     "lucide-react": "^0.574.0",
@@ -21,8 +21,8 @@
     "react-router-dom": "^7.13.0",
     "react-select": "^5.10.2",
     "react-toastify": "^11.0.5",
-    "router-dom": "^3.0.3",
-     "vite": "^7.3.1"
+    "router-dom": "^3.0.3"
+    
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
