@@ -14,12 +14,13 @@ function Postedjobs() {
   const recruiter = JSON.parse(localStorage.getItem("admins")) || {};
   const recruiterEmail = recruiter.email;
 
+  // ✅ Use env variable instead of hardcoded localhost
+  const API_URL = import.meta.env.VITE_API_URL;
+
   const fetchPostedJobs = async () => {
     try {
       const res = await axios.get(
-        `http://localhost:5000/api/jobsdb/recruiter/${encodeURIComponent(
-          recruiterEmail,
-        )}`,
+        `${API_URL}/api/jobsdb/recruiter/${encodeURIComponent(recruiterEmail)}`
       );
       setJobs(res.data);
       localStorage.setItem("totalposted", res.data.length);
@@ -36,7 +37,8 @@ function Postedjobs() {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/jobsdb/${id}`);
+      // ✅ Use env variable instead of hardcoded localhost
+      await axios.delete(`${API_URL}/api/jobsdb/${id}`);
       setJobs((prev) => prev.filter((job) => job._id !== id));
     } catch (error) {
       console.error("Error deleting job:", error);
