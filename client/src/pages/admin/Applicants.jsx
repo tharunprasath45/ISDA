@@ -24,7 +24,7 @@ function Applicants() {
 const fetchApplicants = async () => {
   try {
     const res = await axios.get(
-      `http://localhost:5000/api/applicants/recruiter/${encodeURIComponent(recruiterEmail)}`
+      `${import.meta.env.VITE_API_URL}/api/applicants/recruiter/${encodeURIComponent(recruiterEmail)}`
     );
     setApplicants(res.data);
     localStorage.setItem("totalapplicants", res.data.length); // ← add this
@@ -42,7 +42,8 @@ const fetchApplicants = async () => {
   const handleStatusChange = async (selected, applicantId) => {
     try {
       await axios.put(
-        `http://localhost:5000/api/applicants/${applicantId}/status`,
+       
+`${import.meta.env.VITE_API_URL}/api/applicants/${applicantId}/status`,
         {
           status: selected.value,
         },
@@ -62,7 +63,7 @@ const fetchApplicants = async () => {
 
 const handleDelete = async (applicantId) => {
   try {
-    await axios.delete(`http://localhost:5000/api/applicants/${applicantId}`);
+    `${import.meta.env.VITE_API_URL}/api/applicants/${applicantId}`;
     setApplicants((prev) => {
       const updated = prev.filter((applicant) => applicant._id !== applicantId);
       localStorage.setItem("totalapplicants", updated.length); // ← add this
