@@ -4,7 +4,7 @@ import "./Dashboard.css";
 import { header, renderheader } from "./Dashboardcontent";
 import { Save, User, Shield, Calendars, Plus, X, Trash2 } from "lucide-react";
 import Select from "react-select";
-import supabase from "../Supabase";
+import supabase from "../supabase";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";

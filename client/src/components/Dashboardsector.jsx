@@ -16,7 +16,7 @@ import Dashboardcontent from "./Dashboardcontent";
 import Skillanalysis from "./Skillanalysis";
 import Profile from "./Profile";
 import { useNavigate } from "react-router-dom";
-import supabase from "../Supabase";
+import supabase from "../supabase";
 import Reccomendations from "./Reccomendations";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
