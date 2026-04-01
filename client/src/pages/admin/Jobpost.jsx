@@ -106,7 +106,7 @@ function Jobpost() {
     try {
       setLoading(true);
 
-      await axios.post("http://localhost:5000/api/jobsdb", newJob);
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/jobsdb`, newJob);
 
       toast.success("Job posted successfully!", {
         position: "top-center",
