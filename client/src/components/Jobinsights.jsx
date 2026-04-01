@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "./jobinsights.css";
+import "./Jobinsights.css";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { renderheader, header } from "./Dashboardcontent";
