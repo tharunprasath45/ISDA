@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./Home.css";
-import business from "../../assets/Business_decisions-pik.png";
+import business from "../../assets/Business_decisions-Pik.png";
 import icon from "../../assets/icons.png";
 import carrerforge from "../../assets/carrerforge.png";
 import { Link } from "react-router-dom";
