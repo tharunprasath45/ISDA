@@ -5,9 +5,10 @@ import carrerforge from "../../assets/carrerforge.png";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { AUTH_TEXT } from "./Text";
-import supabase from "../../Supabase";
+
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import supabase from "../../supabase";
 
 function Loginpage({ Welcome, Carrer, Access, Sign, Dont }) {
   const navigate = useNavigate();

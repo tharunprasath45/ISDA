@@ -4,7 +4,7 @@ import carrerforge from "../../assets/carrerforge.png";
 import { CircleCheck, ArrowLeft } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import "./Signup.css";
-import supabase from "../../Supabase";
+import supabase from "../../supabase";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Select from "react-select";
