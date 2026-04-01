@@ -12,6 +12,7 @@ const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:3000",
   "https://isda-sigma.vercel.app",
+  "https://classy-maamoul-70bfcb.netlify.app",
 ];
 
 app.use(
